@@ -13,10 +13,10 @@ title : dahernan's blog
 tagline: {{Random blog posts}}
 author :
   name : David Hernandez
-  email : dahernan@gmail.com
+  email : 
   github : dahernan
   twitter : dahernan
-  feedburner : dahernan
+  
 
 # The production_url is only used when full-domain names are needed
 # such as sitemap.txt 
@@ -101,7 +101,7 @@ JB :
   analytics :
     provider : google 
     google : 
-        tracking_id : 'UA-123-12'
+        tracking_id : 'UA-354840-6'
     getclicky :
       site_id : 
     mixpanel :
