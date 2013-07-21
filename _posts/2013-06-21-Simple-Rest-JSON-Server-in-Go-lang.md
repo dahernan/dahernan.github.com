@@ -12,3 +12,9 @@ On the test it's easy to mock whatever you need, because function are first clas
 so you can have implementations on fly. And some of the clasess of the standard library they have test utilities like 'httptest'
 
 Here the test.
+
+https://gist.github.com/dahernan/6047770
+
+And now the implementation, with a little functional style.
+
+https://gist.github.com/dahernan/6047777
