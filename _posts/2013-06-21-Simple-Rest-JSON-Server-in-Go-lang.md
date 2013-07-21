@@ -13,8 +13,8 @@ so you can have implementations on fly. And some of the clasess of the standard 
 
 Here the test.
 
-https://gist.github.com/dahernan/6047770
+{% gist 6047770 %}
 
 And now the implementation, with a little functional style.
 
-https://gist.github.com/dahernan/6047777
+{% gist 6047777 %}
