@@ -3,8 +3,51 @@ layout: post
 tags : [golang] [json] [rest]
 ---
 
+These days I'm experimenting with Go lang, I love the language. I like specially the simplicity, you can check out
+in the presentation from Rob Pike, [Another Go At Language Design](http://www.stanford.edu/class/ee380/Abstracts/100428-pike-stanford.pdf).
 
-'''
+So, my first try in Go is to do a small Rest API for serving JSON documents. Also try a little TDD in Go to see how easy it could be.
+
+On the test it's easy to mock whatever you need, because function are first class citizens, 
+so you can have implementations on fly. And some of the clasess of the standard library they have test utilities like 'httptest'
+
+Here the test.
+```go
+package main
+
+import (
+	"github.com/bmizerany/assert"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+)
+
+func TestJsonServerReturnsJsonDocumentWithRightHeaders(t *testing.T) {
+
+	req := new(http.Request)
+
+	builder := func(req *http.Request) interface{} {
+		return map[string]interface{}{
+			"test": "test_value",
+		}
+	}
+
+	jsonServer := JsonServer(builder)
+	responseWriter := httptest.NewRecorder()
+
+	// call to test
+	jsonServer(responseWriter, req)
+
+	contentType := responseWriter.Header().Get("Content-Type")
+	assert.Equal(t, contentType, "application/json")
+
+	assert.Equal(t, "{\"test\":\"test_value\"}\n", responseWriter.Body.String())
+
+}
+```
+And now the implementation, with a little functional style.
+
+```go
 package main
 
 import (
@@ -46,4 +89,4 @@ func main() {
 		log.Fatal("ListenAndServe: ", err)
 	}
 }
-'''
+```
