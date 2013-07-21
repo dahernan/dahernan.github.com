@@ -13,8 +13,4 @@ so you can have implementations on fly. And some of the clasess of the standard 
 
 Here the test.
 
-{% gist 6047770 %}
 
-And now the implementation, with a little functional style.
-
-{% gist 6047777 %}
