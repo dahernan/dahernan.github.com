@@ -4,7 +4,7 @@ tags : [golang]
 ---
 
 These days I'm experimenting with Go lang, I love the language. I like specially the simplicity, you can check out
-in the presentation from Rob Pike, [Another Go At Language Design](http://www.stanford.edu/class/ee380/Abstracts/100428-pike-stanford.pdf).
+the principles of design, in the presentation from Rob Pike, [Another Go At Language Design](http://www.stanford.edu/class/ee380/Abstracts/100428-pike-stanford.pdf).
 
 So, my first try in Go is to do a small Rest API for serving JSON documents. Also try a little TDD in Go to see how easy it could be.
 
