@@ -1,6 +1,6 @@
 ---
 layout: post
-tags : [golang] [json] [rest]
+tags : [golang]
 ---
 
 These days I'm experimenting with Go lang, I love the language. I like specially the simplicity, you can check out
