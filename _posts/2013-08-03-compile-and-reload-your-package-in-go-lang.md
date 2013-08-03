@@ -15,5 +15,5 @@ And now with a simple:
 rerun --test github.com/dahernan/goangular/server
 ```
 
-I have my webserver running, and every time that I make a change in the code, the test are passed again, and the server is reload. I know right now my server It's very light and It does that in milliseconds, but I'm sure it's not going to reach the start time of any Java application :)  
+I have my webserver running, and every time that I make a change in the code, the test are passed again, and the server is reload. I know, right now my server It's very light and It does that in milliseconds, but I'm sure it's not going to reach the start time of any Java application :)  
 
