@@ -3,7 +3,7 @@ layout: post
 tags : [golang]
 ---
 
-One of the Go lang goodness is the blazing fast compiler (can you here me Scala? :P), that can give you the productivity of a interpreted language.
+One of the Go lang goodness is the blazing fast compiler (can you hear me Scala? :P), that can give you the productivity of a interpreted language.
 But to be, productive in the same way, at least building Web services, you need get rid of the recompile and kill/reload cycle for your application.
 
 I tried a couple of utils to do that, and the most simple that it works is [*rerun*](https://github.com/skelterjohn/rerun)
