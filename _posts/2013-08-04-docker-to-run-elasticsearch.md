@@ -17,6 +17,18 @@ So this is the content of my *Dockerfile*.
 
 {% gist 6149626 %}
 
+Now I can build the image with:
+
+```
+$ docker build -t="elasticsearch" .
+```
+
+And after a while if I do:
+
+```
+$ docker images
+```
+
 {% gist 6149703 %}
 
 I can see my new image *elasticsearch* there, and finally I can run elasticsearch in that container.
