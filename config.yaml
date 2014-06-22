@@ -1,7 +1,0 @@
----
-baseurl: "http://dahernan.github.io"
-title: "dahernan's blog"
-canonifyurls: true
-permalinks:
-  post: /:year/:month/:day/:title/
----
