@@ -3,8 +3,13 @@
   
   <url>
     <loc>http://dahernan.github.io/</loc>
-    <lastmod>2013-10-14T00:00:00+00:00</lastmod>
+    <lastmod>2014-06-22T00:00:00+00:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://dahernan.github.io/2014/06/22/error-handling-and-pointers-in-go-lang/</loc>
+    <lastmod>2014-06-22T00:00:00+00:00</lastmod>
   </url>
   
   <url>

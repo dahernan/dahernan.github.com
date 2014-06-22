@@ -6,7 +6,100 @@
     <language>en-US</language>
     <author>Enthusiastic Hugo User</author>
     <rights>Copyright (c) 2014, Enthusiastic Hugo User; all rights reserved.</rights>
-    <updated>Sat, 03 Aug 2013 00:00:00 UTC</updated>
+    <updated>Sun, 22 Jun 2014 00:00:00 UTC</updated>
+    
+    <item>
+      <title>Error handling and pointers in Go lang</title>
+      <link>http://dahernan.github.io/2014/06/22/error-handling-and-pointers-in-go-lang/</link>
+      <pubDate>Sun, 22 Jun 2014 00:00:00 UTC</pubDate>
+      <author>Enthusiastic Hugo User</author>
+      <guid>http://dahernan.github.io/2014/06/22/error-handling-and-pointers-in-go-lang/</guid>
+      <description>&lt;p&gt;A couple of weeks ago I went to the &lt;a href=&#34;http://www.meetup.com/Go-London-User-Group/&#34;&gt;Go London User Group&lt;/a&gt; and one of the talks was about &lt;a href=&#34;https://www.youtube.com/watch?v=Ph4eYD7Bgek&#34;&gt;error handling in Go&lt;/a&gt; by Daniel Morsing (really good talk).&lt;/p&gt;
+
+&lt;p&gt;After thinking, I rembembered that there is another antipattern when using pointers to error, for example here.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// http://play.golang.org/p/Xktu2Jz-Zc
+
+package main
+
+import &amp;quot;fmt&amp;quot;
+
+type MyError struct {
+    path string
+    msg  string
+}
+
+func (e MyError) Error() string {
+    return e.path + &amp;quot;:&amp;quot; + e.msg
+}
+
+func uglyBug(blowup bool) error {
+    var err *MyError = nil
+    if blowup {
+        err = &amp;amp;MyError{&amp;quot;path1&amp;quot;, &amp;quot;msg1&amp;quot;}
+    }
+    return err
+}
+
+func main() {
+    e1 := uglyBug(false)
+    if e1 != nil {
+        fmt.Println(&amp;quot;Pointer -&amp;gt; &amp;quot;, e1)
+    } else {
+        fmt.Println(&amp;quot;It&#39;s ok&amp;quot;)
+    }
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Output:
+&lt;code&gt;
+Pointer -&amp;gt;  &amp;lt;nil&amp;gt;
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;The value of &lt;em&gt;e1&lt;/em&gt; is going to be &lt;em&gt;not nil&lt;/em&gt;, because the interface is not nil (it needs to have the value and the type nil, to return nil).&lt;/p&gt;
+
+&lt;p&gt;To fix this, you have to explicit return nil.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;package main
+
+import &amp;quot;fmt&amp;quot;
+
+type MyError struct {
+    path string
+    msg  string
+}
+
+func (e MyError) Error() string {
+    return e.path + &amp;quot;:&amp;quot; + e.msg
+}
+
+func fixed(blowup bool) error {
+    if blowup {
+        return &amp;amp;MyError{&amp;quot;path1&amp;quot;, &amp;quot;msg1&amp;quot;}
+    }
+    return nil
+}
+
+func main() {
+    e1 := fixed(false)
+    if e1 != nil {
+        fmt.Println(&amp;quot;Pointer -&amp;gt; &amp;quot;, e1)
+    } else {
+        fmt.Println(&amp;quot;It&#39;s ok&amp;quot;)
+    }
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Output:
+&lt;code&gt;
+It&#39;s ok
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;So always do a explicit return nil, when you need an interface to be nil.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Compile and reload your package in Go lang</title>

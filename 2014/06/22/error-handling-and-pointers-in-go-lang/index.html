@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="David Hernandez"> 
+
+    <title>Error handling and pointers in Go lang - http://dahernan.github.io</title>
+    <link rel="canonical" href="http://dahernan.github.io/2014/06/22/error-handling-and-pointers-in-go-lang/">
+    
+    <link href="http://dahernan.github.io/css/bootstrap.css" rel="stylesheet">
+    <link href="http://dahernan.github.io/css/font-awesome.css" rel="stylesheet">
+    <link href="http://dahernan.github.io/css/custom.css" rel="stylesheet">
+    
+</head>
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle Navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="http://dahernan.github.io">dahernan&#39;s blog</a>
+            </div>
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="http://dahernan.github.io/post/">Post Index</a></li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+<div class="container">
+    <div class="row">
+        <div class="col-md-9">
+            <div class="well well-sm">
+                    <h3>Error handling and pointers in Go lang<br> <small></small></h3>
+                    <hr>
+                    <p>A couple of weeks ago I went to the <a href="http://www.meetup.com/Go-London-User-Group/">Go London User Group</a> and one of the talks was about <a href="https://www.youtube.com/watch?v=Ph4eYD7Bgek">error handling in Go</a> by Daniel Morsing (really good talk).</p>
+
+<p>After thinking, I rembembered that there is another antipattern when using pointers to error, for example here.</p>
+
+<pre><code class="go">// http://play.golang.org/p/Xktu2Jz-Zc
+
+package main
+
+import &quot;fmt&quot;
+
+type MyError struct {
+    path string
+    msg  string
+}
+
+func (e MyError) Error() string {
+    return e.path + &quot;:&quot; + e.msg
+}
+
+func uglyBug(blowup bool) error {
+    var err *MyError = nil
+    if blowup {
+        err = &amp;MyError{&quot;path1&quot;, &quot;msg1&quot;}
+    }
+    return err
+}
+
+func main() {
+    e1 := uglyBug(false)
+    if e1 != nil {
+        fmt.Println(&quot;Pointer -&gt; &quot;, e1)
+    } else {
+        fmt.Println(&quot;It's ok&quot;)
+    }
+
+}
+</code></pre>
+
+<p>Output:
+<code>
+Pointer -&gt;  &lt;nil&gt;
+</code></p>
+
+<p>The value of <em>e1</em> is going to be <em>not nil</em>, because the interface is not nil (it needs to have the value and the type nil, to return nil).</p>
+
+<p>To fix this, you have to explicit return nil.</p>
+
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+type MyError struct {
+    path string
+    msg  string
+}
+
+func (e MyError) Error() string {
+    return e.path + &quot;:&quot; + e.msg
+}
+
+func fixed(blowup bool) error {
+    if blowup {
+        return &amp;MyError{&quot;path1&quot;, &quot;msg1&quot;}
+    }
+    return nil
+}
+
+func main() {
+    e1 := fixed(false)
+    if e1 != nil {
+        fmt.Println(&quot;Pointer -&gt; &quot;, e1)
+    } else {
+        fmt.Println(&quot;It's ok&quot;)
+    }
+
+}
+</code></pre>
+
+<p>Output:
+<code>
+It's ok
+</code></p>
+
+<p>So always do a explicit return nil, when you need an interface to be nil.</p>
+
+            </div>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'dahernan';
+    var disqus_identifier = 'http:\/\/dahernan.github.io\/2014\/06\/22\/error-handling-and-pointers-in-go-lang\/';
+    var disqus_title = 'Error handling and pointers in Go lang';
+    var disqus_url = 'http:\/\/dahernan.github.io\/2014\/06\/22\/error-handling-and-pointers-in-go-lang\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+
+        
+        <div class="col-md-3">
+            <div class="well well-sm"> 
+                <h4>June 22, 2014<br>
+                <small>241 words</small></h4>
+                <hr>
+                <strong>Categories</strong>
+                <ul class="list-unstyled">
+                
+                </ul>
+                <hr>
+                <strong>Tags</strong><br>
+                <a class="label label-default" href="http://dahernan.github.io/tags/golang">golang</a> 
+            </div>
+                <div class="panel panel-default">
+        <div class="panel-heading" style="padding: 2px 15px;">
+            <h4>Connect. Socialize.</h4>
+        </div>
+        <div class="panel-body">
+            <img src="http://dahernan.github.io/images/profile.jpg" class="img-responsive img-thumbnail" alt="My profile image"/>
+            <a href="https://github.com/dahernan/" class="btn btn-primary btn-xs"><i class="fa fa-github-square fa-2x"></i></a>
+            <a href="https://www.twitter.com/dahernan" class="btn btn-info btn-xs"><i class="fa fa-twitter-square fa-2x"></i></a>
+            <a href="http://linkedin.com/in/dahernan" class="btn btn-info btn-xs"><i class="fa fa-linkedin-square fa-2x"></i></a>      
+        </div>
+    </div>
+        </div>
+    </div>
+        <footer>
+            <div class="row">
+                <hr>
+                <div class="col-sm-12">
+                    <p>&copy; David Hernandez 2014<br>
+                    Built with <a href="https://github.com/spf13/hugo">Hugo</a></p>
+                </div>
+            </div>
+        </footer>
+</div>
+
+    <script src="http://dahernan.github.io/js/jquery.js"></script>
+    <script src="http://dahernan.github.io/js/bootstrap.js"></script>
+</body>
+</html>
