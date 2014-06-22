@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+      <title>Posts on dahernan&#39;s blog </title>
+    <link>http://dahernan.github.io/post/index.xml</link>
+    <language>en-US</language>
+    <author>Enthusiastic Hugo User</author>
+    <rights>Copyright (c) 2014, Enthusiastic Hugo User; all rights reserved.</rights>
+    <updated>Mon, 14 Oct 2013 00:00:00 UTC</updated>
+    
+    <item>
+      <title>Continuous Deployment Trends</title>
+      <link>http://dahernan.github.io/2013/10/14/continuous-deployment-trends/</link>
+      <pubDate>Mon, 14 Oct 2013 00:00:00 UTC</pubDate>
+      <author>Enthusiastic Hugo User</author>
+      <guid>http://dahernan.github.io/2013/10/14/continuous-deployment-trends/</guid>
+      <description>
+
+&lt;p&gt;This is a post putting together what companies are doing in the Continuous Deployment space, and what are the current trends.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;Deployments at Etsy&lt;/h2&gt;
+
+&lt;p&gt;Here are some data about Etsy deploys to production (only data for half of the year 2013)&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Average Deploys per day: 35.75&lt;/li&gt;
+&lt;li&gt;Average Authors per deploy: 7.01&lt;/li&gt;
+&lt;li&gt;Average Commits per deploy: 11.25&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;What we can read between lines is, if your &amp;ldquo;Average Deploys per day&amp;rdquo; is lower than 1 you&amp;rsquo;re not doing Continuous Deployment, (you probably releasing often but not doing it continuously)&lt;/p&gt;
+
+&lt;p&gt;Some insides:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Part of the Etsy Bootcamp is to deploy code in production, on your first day.&lt;/li&gt;
+&lt;li&gt;Config System / Feature Switches: You have the ability to enable a feature, for group of users, a percentage of users, or for A/B testing&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The typical dev cycle is:
+Deploy your feature in production ASAP -&amp;gt; Enable for QAs and Admins -&amp;gt; Public Prototype (5%-10% of users) -&amp;gt; A/B Test (50% users) -&amp;gt; Full website&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Branching in Code: Use your configuration system, to keep your feature independent, and avoid to have long live branches.&lt;/li&gt;
+&lt;li&gt;Versioning: There is no versioning and no rollback, you always push forward (You can disable features if something goes wrong)&lt;/li&gt;
+&lt;li&gt;Experimentation: They have a platform to manage what features are used, and when they are in production. (First they use a tool &amp;ldquo;Launch Calendar&amp;rdquo;, now more advanced unified launch management tool called &amp;ldquo;Catapult&amp;rdquo;)&lt;/li&gt;
+&lt;li&gt;Metrics: Detect if any of the changes goes wrong (statsd, ganglia, etc)&lt;/li&gt;
+&lt;li&gt;Start simple &amp;gt; Deploy ASAP &amp;gt; Experiment &amp;gt; Learn&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Etsy:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.infoq.com/presentations/etsy-deploy&#34;&gt;Etsy Deploys&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://devslovebacon.com/conferences/bacon-2013/talks/bring-the-noise-continuously-deploying-under-a-hailstorm-of-metrics&#34;&gt;Etsy deployments and metrics&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;Deployments at IMVU&lt;/h2&gt;
+
+&lt;p&gt;IMVU is &amp;ldquo;the inventor&amp;rdquo; of Continuous Delivery but also leading the &amp;ldquo;Lean Startup&amp;rdquo;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Deploys per day: 50&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Some insides:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The time to deploy is around 20 minutes&lt;/li&gt;
+&lt;li&gt;The feedback on features is always from real customers&lt;/li&gt;
+&lt;li&gt;Metrics, as an essential part of the deployments&lt;/li&gt;
+&lt;li&gt;Also branching in code and feature enabled/disabled&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;IMVU:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.slideshare.net/bgdurrett/sds-2010-continuous-deployment-at-imvu&#34;&gt;Continuous Deployment at IMVU&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;toc_2&#34;&gt;Deployments at Quora&lt;/h2&gt;
+
+&lt;p&gt;Quora is doing also well&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Deploys per day: 46&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Some insides:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;From the developer&amp;rsquo;s side, only a single command is required to push code to production: git push&lt;/li&gt;
+&lt;li&gt;It takes six to seven minutes on average for a revision to start running in production.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Quora:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://engineering.quora.com/Continuous-Deployment-at-Quora&#34;&gt;Continuous Deployment at Quora&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;toc_3&#34;&gt;How to enable Continuous Deployment&lt;/h2&gt;
+
+&lt;p&gt;I highly recommend to watch this talk, because is a good summary of all the techniques:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.confreaks.com/videos/2365-mwrc2013-the-many-ways-to-deploy-continuously&#34;&gt;Many Ways to Deploy Continuously&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Some common patterns for devs are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Branching in Code&lt;/li&gt;
+&lt;li&gt;Versioning the Database Schema&lt;/li&gt;
+&lt;li&gt;Deploy to handle multiple versions at the same time (a deploy on 1000 machines could take a while, be ready to have multiple versions at the same time)&lt;/li&gt;
+&lt;li&gt;Ship an image (AMIs, dokus, docker containers &amp;hellip;) isolate problems and makes your environment predictable and testable&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;toc_4&#34;&gt;Other links&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.infoq.com/presentations/Continuous-Testing-Build-Cloud&#34;&gt;Continuous Testing at Google&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://martinfowler.com/bliki/ContinuousDelivery.html&#34;&gt;Martin Fowler on Continuous Delivery&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.infoq.com/articles/Continous-Delivery-Patterns&#34;&gt;Continous Delivery Patterns&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Docker to run Elasticsearch</title>
+      <link>http://dahernan.github.io/2013/08/04/docker-to-run-elasticsearch/</link>
+      <pubDate>Sun, 04 Aug 2013 00:00:00 UTC</pubDate>
+      <author>Enthusiastic Hugo User</author>
+      <guid>http://dahernan.github.io/2013/08/04/docker-to-run-elasticsearch/</guid>
+      <description>&lt;p&gt;In this post I&amp;rsquo;m going to explain how to create and use a docker image, for easy access to &lt;a href=&#34;http://www.elasticsearch.org&#34;&gt;elasticsearch&lt;/a&gt; for development purposes.
+If you don&amp;rsquo;t know &lt;a href=&#34;http://docker.io/&#34;&gt;docker&lt;/a&gt;, just check it out. In my opinion is the way that everybody is going to distribuite webapps soon.&lt;/p&gt;
+
+&lt;p&gt;In the same way that the project has library dependencies, your app usually depends on more things. Let&amp;rsquo;s say the database or in this case the search engine.
+Why not distribute the dependency with the code? Well even if you have a VM could be to much.&lt;/p&gt;
+
+&lt;p&gt;With containers that is over, now you can distribute with your source a Dockerfile, or even &lt;a href=&#34;http://blog.docker.io/2013/07/how-to-use-your-own-registry/&#34;&gt;have yor own repository of docker images&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;For my dependency &lt;a href=&#34;http://www.elasticsearch.org&#34;&gt;elasticsearch&lt;/a&gt; a need a new Dockerfile, so the next developer could reproduce my environment very easy.&lt;/p&gt;
+
+&lt;p&gt;So this is the content of my &lt;em&gt;Dockerfile&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;{% gist 6149626 %}&lt;/p&gt;
+
+&lt;p&gt;Now I can build the image with:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker build -t=&amp;quot;elasticsearch&amp;quot; .
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And after a while if I do:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker images
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;{% gist 6149703 %}&lt;/p&gt;
+
+&lt;p&gt;I can see my new image &lt;em&gt;elasticsearch&lt;/em&gt; there, and finally I can run elasticsearch in that container.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker run -d elasticsearch
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;{% gist 6149724 %}&lt;/p&gt;
+
+&lt;p&gt;Now my elasticsearch instance is running in its own container, forwarding the port 9200. So if I want to try to run a elasticsearch cluster, I&amp;rsquo;m only have to run more containers.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Compile and reload your package in Go lang</title>
+      <link>http://dahernan.github.io/2013/08/03/compile-and-reload-your-package-in-go-lang/</link>
+      <pubDate>Sat, 03 Aug 2013 00:00:00 UTC</pubDate>
+      <author>Enthusiastic Hugo User</author>
+      <guid>http://dahernan.github.io/2013/08/03/compile-and-reload-your-package-in-go-lang/</guid>
+      <description>&lt;p&gt;One of the Go lang goodness is the blazing fast compiler (can you hear me Scala? :P), that can give you the productivity of a interpreted language.
+But to be, productive in the same way, at least building Web services, you need get rid of the recompile and kill/reload cycle for your application.&lt;/p&gt;
+
+&lt;p&gt;I tried a couple of utils to do that, and the most simple that it works is &lt;a href=&#34;https://github.com/skelterjohn/rerun&#34;&gt;&lt;em&gt;rerun&lt;/em&gt;&lt;/a&gt;
+You can just clone the repository, do a &amp;lsquo;go install&amp;rsquo; and add the binary to your PATH variable.&lt;/p&gt;
+
+&lt;p&gt;And now with a simple:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;rerun --test github.com/dahernan/goangular/server
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I have my webserver running, and every time that I make a change in the code, the test are passed again, and the server is reload. I know, right now my server It&amp;rsquo;s very light and It does that in milliseconds, but I&amp;rsquo;m sure it&amp;rsquo;s not going to reach the start time of any Java application :)&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Json service in Go lang</title>
+      <link>http://dahernan.github.io/2013/06/21/json-service-in-go-lang/</link>
+      <pubDate>Fri, 21 Jun 2013 00:00:00 UTC</pubDate>
+      <author>Enthusiastic Hugo User</author>
+      <guid>http://dahernan.github.io/2013/06/21/json-service-in-go-lang/</guid>
+      <description>&lt;p&gt;These days I&amp;rsquo;m experimenting with Go lang, I love the language. I like specially the simplicity, you can check out
+the principles of design, in the presentation from Rob Pike, &lt;a href=&#34;http://www.stanford.edu/class/ee380/Abstracts/100428-pike-stanford.pdf&#34;&gt;Another Go At Language Design&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;So, my first try in Go is to do a small Rest API for serving JSON documents. Also try a little TDD in Go to see how easy it could be.&lt;/p&gt;
+
+&lt;p&gt;On the test it&amp;rsquo;s easy to mock whatever you need, because function are first class citizens,
+so you can have implementations on fly. And some of the clasess of the standard library they have test utilities like &amp;lsquo;httptest&amp;rsquo;&lt;/p&gt;
+
+&lt;p&gt;Here the test.&lt;/p&gt;
+
+&lt;p&gt;{% gist 6047770 %}&lt;/p&gt;
+
+&lt;p&gt;And now the implementation, with a little functional style.&lt;/p&gt;
+
+&lt;p&gt;{% gist 6047777 %}&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Introduction</title>
+      <link>http://dahernan.github.io/2013/06/14/introduction/</link>
+      <pubDate>Fri, 14 Jun 2013 00:00:00 UTC</pubDate>
+      <author>Enthusiastic Hugo User</author>
+      <guid>http://dahernan.github.io/2013/06/14/introduction/</guid>
+      <description>&lt;p&gt;Maybe you remember me from other old blogs, like &lt;a href=&#34;https://dahernan.blogspot.com&#34;&gt;dahernan.blogspot.com&lt;/a&gt;, so I&amp;rsquo;m going to try to start again,
+and post whatever thing I think is relevant, in this tech world.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
