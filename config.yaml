@@ -2,7 +2,7 @@
 baseurl: "http://dahernan.github.io"
 title: "dahernan's blog"
 canonifyurls: true
-disqusShortname: dahernan
+disqusShortname: "dahernan"
 permalinks:
   post: /:year/:month/:day/:title/
 ---
