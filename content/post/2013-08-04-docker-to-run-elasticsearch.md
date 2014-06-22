@@ -19,7 +19,7 @@ For my dependency [elasticsearch](http://www.elasticsearch.org) a need a new Doc
 
 So this is the content of my *Dockerfile*.
 
-{% gist 6149626 %}
+https://gist.github.com/dahernan/6149626
 
 Now I can build the image with:
 
@@ -31,17 +31,25 @@ And after a while if I do:
 
 ```
 $ docker images
-```
 
-{% gist 6149703 %}
+REPOSITORY          TAG                 ID                  CREATED             SIZE
+ubuntu              12.04               8dbd9e392a96        3 months ago        131.5 MB (virtual 131.5 MB)
+ubuntu              12.10               b750fe79269d        4 months ago        24.65 kB (virtual 180.1 MB)
+ubuntu              latest              8dbd9e392a96        3 months ago        131.5 MB (virtual 131.5 MB)
+ubuntu              precise             8dbd9e392a96        3 months ago        131.5 MB (virtual 131.5 MB)
+ubuntu              quantal             b750fe79269d        4 months ago        24.65 kB (virtual 180.1 MB)
+elasticsearch       latest              ef2487bb289d        52 seconds ago      12.29 kB (virtual 558.7 MB)
+```
 
 I can see my new image *elasticsearch* there, and finally I can run elasticsearch in that container.
 
 ```
 $ docker run -d elasticsearch
-```
 
-{% gist 6149724 %}
+$ docker ps
+ID                  IMAGE                  COMMAND                CREATED             STATUS              PORTS
+29fd16250848        elasticsearch:latest   /bin/sh -c elasticse   32 seconds ago      Up 32 seconds       9200->9200
+```
 
 Now my elasticsearch instance is running in its own container, forwarding the port 9200. So if I want to try to run a elasticsearch cluster, I'm only have to run more containers.
 
