@@ -26,7 +26,7 @@ Why not distribute the dependency with the code? Well even if you have a VM coul
 
 &lt;p&gt;So this is the content of my &lt;em&gt;Dockerfile&lt;/em&gt;.&lt;/p&gt;
 
-&lt;p&gt;{% gist 6149626 %}&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://gist.github.com/dahernan/6149626&#34;&gt;https://gist.github.com/dahernan/6149626&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Now I can build the image with:&lt;/p&gt;
 
@@ -36,16 +36,24 @@ Why not distribute the dependency with the code? Well even if you have a VM coul
 &lt;p&gt;And after a while if I do:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;$ docker images
-&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;{% gist 6149703 %}&lt;/p&gt;
+REPOSITORY          TAG                 ID                  CREATED             SIZE
+ubuntu              12.04               8dbd9e392a96        3 months ago        131.5 MB (virtual 131.5 MB)
+ubuntu              12.10               b750fe79269d        4 months ago        24.65 kB (virtual 180.1 MB)
+ubuntu              latest              8dbd9e392a96        3 months ago        131.5 MB (virtual 131.5 MB)
+ubuntu              precise             8dbd9e392a96        3 months ago        131.5 MB (virtual 131.5 MB)
+ubuntu              quantal             b750fe79269d        4 months ago        24.65 kB (virtual 180.1 MB)
+elasticsearch       latest              ef2487bb289d        52 seconds ago      12.29 kB (virtual 558.7 MB)
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;I can see my new image &lt;em&gt;elasticsearch&lt;/em&gt; there, and finally I can run elasticsearch in that container.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;$ docker run -d elasticsearch
-&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;{% gist 6149724 %}&lt;/p&gt;
+$ docker ps
+ID                  IMAGE                  COMMAND                CREATED             STATUS              PORTS
+29fd16250848        elasticsearch:latest   /bin/sh -c elasticse   32 seconds ago      Up 32 seconds       9200-&amp;gt;9200
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Now my elasticsearch instance is running in its own container, forwarding the port 9200. So if I want to try to run a elasticsearch cluster, I&amp;rsquo;m only have to run more containers.&lt;/p&gt;
 </description>

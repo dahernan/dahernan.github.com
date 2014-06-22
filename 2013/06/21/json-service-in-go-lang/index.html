@@ -52,11 +52,83 @@ so you can have implementations on fly. And some of the clasess of the standard 
 
 <p>Here the test.</p>
 
-<p>{% gist 6047770 %}</p>
+<pre><code class="go">package main
+
+import (
+  &quot;github.com/bmizerany/assert&quot;
+    &quot;net/http&quot;
+    &quot;net/http/httptest&quot;
+    &quot;testing&quot;
+)
+
+func TestJsonServerReturnsJsonDocumentWithRightHeaders(t *testing.T) {
+
+    req := new(http.Request)
+
+    builder := func(req *http.Request) interface{} {
+        return map[string]interface{}{
+            &quot;test&quot;: &quot;test_value&quot;,
+        }
+    }
+
+    jsonServer := JsonServer(builder)
+    responseWriter := httptest.NewRecorder()
+
+    // call to test
+    jsonServer(responseWriter, req)
+
+    contentType := responseWriter.Header().Get(&quot;Content-Type&quot;)
+    assert.Equal(t, contentType, &quot;application/json&quot;)
+
+    assert.Equal(t, &quot;{\&quot;test\&quot;:\&quot;test_value\&quot;}\n&quot;, responseWriter.Body.String())
+
+}
+</code></pre>
 
 <p>And now the implementation, with a little functional style.</p>
 
-<p>{% gist 6047777 %}</p>
+<pre><code class="go">package main
+
+import (
+  &quot;encoding/json&quot;
+  &quot;github.com/bmizerany/pat&quot;
+  &quot;log&quot;
+    &quot;net/http&quot;
+)
+
+type httpHandlerFunc func(w http.ResponseWriter, req *http.Request)
+type jsonHttpBuilderFunc func(req *http.Request) interface{}
+
+func JsonBuilder(req *http.Request) interface{} {
+    jsonMap := make(map[string]interface{})
+    name := req.URL.Query().Get(&quot;:name&quot;)
+    jsonMap[&quot;message&quot;] = &quot;hello &quot; + name
+    return jsonMap
+}
+
+func JsonServer(builderFunc jsonHttpBuilderFunc) (hanlderFunc httpHandlerFunc) {
+    hanlderFunc = func(w http.ResponseWriter, req *http.Request) {
+        enc := json.NewEncoder(w)
+        jsonMap := builderFunc(req)
+        w.Header().Set(&quot;Content-Type&quot;, &quot;application/json&quot;)
+        if err := enc.Encode(&amp;jsonMap); err != nil {
+            log.Fatal(err)
+        }
+    }
+    return
+}
+
+func main() {
+    m := pat.New()
+    m.Get(&quot;/api/hello/:name&quot;, http.HandlerFunc(JsonServer(JsonBuilder)))
+
+    http.Handle(&quot;/&quot;, m)
+    err := http.ListenAndServe(&quot;:3000&quot;, nil)
+    if err != nil {
+        log.Fatal(&quot;ListenAndServe: &quot;, err)
+    }
+}
+</code></pre>
 
             </div>
         </div>
@@ -65,7 +137,7 @@ so you can have implementations on fly. And some of the clasess of the standard 
         <div class="col-md-3">
             <div class="well well-sm"> 
                 <h4>June 21, 2013<br>
-                <small>124 words</small></h4>
+                <small>264 words</small></h4>
                 <hr>
                 <strong>Categories</strong>
                 <ul class="list-unstyled">
@@ -80,14 +152,9 @@ so you can have implementations on fly. And some of the clasess of the standard 
             <h4>Connect. Socialize.</h4>
         </div>
         <div class="panel-body">
-            <a href="https://github.com/SomeSillyUserNameHere/" class="btn btn-primary btn-xs"><i class="fa fa-github-square fa-2x"></i></a>
-            <a href="https://www.facebook.com/SomeSillyUserNameHere" class="btn btn-info btn-xs"><i class="fa fa-facebook-square fa-2x"></i></a>
-
-            <div class="alert alert-info alert-dismissable" style="margin-top:25px;margin-bottom:5px;">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <strong>Hey, listen!</strong><br>
-                You should modify the <code>layouts/chrome/menu.html</code> template and include your own profile links.
-            </div>
+            <a href="https://github.com/dahernan/" class="btn btn-primary btn-xs"><i class="fa fa-github-square fa-2x"></i></a>
+            <a href="https://www.twitter.com/dahernan" class="btn btn-info btn-xs"><i class="fa fa-twitter-square fa-2x"></i></a>
+            <a href="http://linkedin.com/in/dahernan" class="btn btn-info btn-xs"><i class="fa fa-linkedin-square fa-2x"></i></a>      
         </div>
     </div>
         </div>
@@ -96,7 +163,7 @@ so you can have implementations on fly. And some of the clasess of the standard 
             <div class="row">
                 <hr>
                 <div class="col-sm-12">
-                    <p>&copy; Enthusiastic Hugo User 2014<br>
+                    <p>&copy; David Hernandez 2014<br>
                     Built with <a href="https://github.com/spf13/hugo">Hugo</a></p>
                 </div>
             </div>

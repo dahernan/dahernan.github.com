@@ -45,11 +45,83 @@ so you can have implementations on fly. And some of the clasess of the standard 
 
 &lt;p&gt;Here the test.&lt;/p&gt;
 
-&lt;p&gt;{% gist 6047770 %}&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;package main
+
+import (
+  &amp;quot;github.com/bmizerany/assert&amp;quot;
+    &amp;quot;net/http&amp;quot;
+    &amp;quot;net/http/httptest&amp;quot;
+    &amp;quot;testing&amp;quot;
+)
+
+func TestJsonServerReturnsJsonDocumentWithRightHeaders(t *testing.T) {
+
+    req := new(http.Request)
+
+    builder := func(req *http.Request) interface{} {
+        return map[string]interface{}{
+            &amp;quot;test&amp;quot;: &amp;quot;test_value&amp;quot;,
+        }
+    }
+
+    jsonServer := JsonServer(builder)
+    responseWriter := httptest.NewRecorder()
+
+    // call to test
+    jsonServer(responseWriter, req)
+
+    contentType := responseWriter.Header().Get(&amp;quot;Content-Type&amp;quot;)
+    assert.Equal(t, contentType, &amp;quot;application/json&amp;quot;)
+
+    assert.Equal(t, &amp;quot;{\&amp;quot;test\&amp;quot;:\&amp;quot;test_value\&amp;quot;}\n&amp;quot;, responseWriter.Body.String())
+
+}
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;And now the implementation, with a little functional style.&lt;/p&gt;
 
-&lt;p&gt;{% gist 6047777 %}&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;package main
+
+import (
+  &amp;quot;encoding/json&amp;quot;
+  &amp;quot;github.com/bmizerany/pat&amp;quot;
+  &amp;quot;log&amp;quot;
+    &amp;quot;net/http&amp;quot;
+)
+
+type httpHandlerFunc func(w http.ResponseWriter, req *http.Request)
+type jsonHttpBuilderFunc func(req *http.Request) interface{}
+
+func JsonBuilder(req *http.Request) interface{} {
+    jsonMap := make(map[string]interface{})
+    name := req.URL.Query().Get(&amp;quot;:name&amp;quot;)
+    jsonMap[&amp;quot;message&amp;quot;] = &amp;quot;hello &amp;quot; + name
+    return jsonMap
+}
+
+func JsonServer(builderFunc jsonHttpBuilderFunc) (hanlderFunc httpHandlerFunc) {
+    hanlderFunc = func(w http.ResponseWriter, req *http.Request) {
+        enc := json.NewEncoder(w)
+        jsonMap := builderFunc(req)
+        w.Header().Set(&amp;quot;Content-Type&amp;quot;, &amp;quot;application/json&amp;quot;)
+        if err := enc.Encode(&amp;amp;jsonMap); err != nil {
+            log.Fatal(err)
+        }
+    }
+    return
+}
+
+func main() {
+    m := pat.New()
+    m.Get(&amp;quot;/api/hello/:name&amp;quot;, http.HandlerFunc(JsonServer(JsonBuilder)))
+
+    http.Handle(&amp;quot;/&amp;quot;, m)
+    err := http.ListenAndServe(&amp;quot;:3000&amp;quot;, nil)
+    if err != nil {
+        log.Fatal(&amp;quot;ListenAndServe: &amp;quot;, err)
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
     

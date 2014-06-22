@@ -54,7 +54,7 @@ Why not distribute the dependency with the code? Well even if you have a VM coul
 
 <p>So this is the content of my <em>Dockerfile</em>.</p>
 
-<p>{% gist 6149626 %}</p>
+<p><a href="https://gist.github.com/dahernan/6149626">https://gist.github.com/dahernan/6149626</a></p>
 
 <p>Now I can build the image with:</p>
 
@@ -64,16 +64,24 @@ Why not distribute the dependency with the code? Well even if you have a VM coul
 <p>And after a while if I do:</p>
 
 <pre><code>$ docker images
-</code></pre>
 
-<p>{% gist 6149703 %}</p>
+REPOSITORY          TAG                 ID                  CREATED             SIZE
+ubuntu              12.04               8dbd9e392a96        3 months ago        131.5 MB (virtual 131.5 MB)
+ubuntu              12.10               b750fe79269d        4 months ago        24.65 kB (virtual 180.1 MB)
+ubuntu              latest              8dbd9e392a96        3 months ago        131.5 MB (virtual 131.5 MB)
+ubuntu              precise             8dbd9e392a96        3 months ago        131.5 MB (virtual 131.5 MB)
+ubuntu              quantal             b750fe79269d        4 months ago        24.65 kB (virtual 180.1 MB)
+elasticsearch       latest              ef2487bb289d        52 seconds ago      12.29 kB (virtual 558.7 MB)
+</code></pre>
 
 <p>I can see my new image <em>elasticsearch</em> there, and finally I can run elasticsearch in that container.</p>
 
 <pre><code>$ docker run -d elasticsearch
-</code></pre>
 
-<p>{% gist 6149724 %}</p>
+$ docker ps
+ID                  IMAGE                  COMMAND                CREATED             STATUS              PORTS
+29fd16250848        elasticsearch:latest   /bin/sh -c elasticse   32 seconds ago      Up 32 seconds       9200-&gt;9200
+</code></pre>
 
 <p>Now my elasticsearch instance is running in its own container, forwarding the port 9200. So if I want to try to run a elasticsearch cluster, I&rsquo;m only have to run more containers.</p>
 
@@ -84,7 +92,7 @@ Why not distribute the dependency with the code? Well even if you have a VM coul
         <div class="col-md-3">
             <div class="well well-sm"> 
                 <h4>August 4, 2013<br>
-                <small>231 words</small></h4>
+                <small>312 words</small></h4>
                 <hr>
                 <strong>Categories</strong>
                 <ul class="list-unstyled">
@@ -99,14 +107,9 @@ Why not distribute the dependency with the code? Well even if you have a VM coul
             <h4>Connect. Socialize.</h4>
         </div>
         <div class="panel-body">
-            <a href="https://github.com/SomeSillyUserNameHere/" class="btn btn-primary btn-xs"><i class="fa fa-github-square fa-2x"></i></a>
-            <a href="https://www.facebook.com/SomeSillyUserNameHere" class="btn btn-info btn-xs"><i class="fa fa-facebook-square fa-2x"></i></a>
-
-            <div class="alert alert-info alert-dismissable" style="margin-top:25px;margin-bottom:5px;">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <strong>Hey, listen!</strong><br>
-                You should modify the <code>layouts/chrome/menu.html</code> template and include your own profile links.
-            </div>
+            <a href="https://github.com/dahernan/" class="btn btn-primary btn-xs"><i class="fa fa-github-square fa-2x"></i></a>
+            <a href="https://www.twitter.com/dahernan" class="btn btn-info btn-xs"><i class="fa fa-twitter-square fa-2x"></i></a>
+            <a href="http://linkedin.com/in/dahernan" class="btn btn-info btn-xs"><i class="fa fa-linkedin-square fa-2x"></i></a>      
         </div>
     </div>
         </div>
@@ -115,7 +118,7 @@ Why not distribute the dependency with the code? Well even if you have a VM coul
             <div class="row">
                 <hr>
                 <div class="col-sm-12">
-                    <p>&copy; Enthusiastic Hugo User 2014<br>
+                    <p>&copy; David Hernandez 2014<br>
                     Built with <a href="https://github.com/spf13/hugo">Hugo</a></p>
                 </div>
             </div>
