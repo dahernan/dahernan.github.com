@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+      <title>Golang on dahernan&#39;s blog </title>
+    <link>http://localhost:1313/tags/golang/index.xml</link>
+    <language>en-US</language>
+    <author>Enthusiastic Hugo User</author>
+    <rights>Copyright (c) 2014, Enthusiastic Hugo User; all rights reserved.</rights>
+    <updated>Sat, 03 Aug 2013 00:00:00 UTC</updated>
+    
+    <item>
+      <title>Compile and reload your package in Go lang</title>
+      <link>http://localhost:1313/2013/08/03/compile-and-reload-your-package-in-go-lang/</link>
+      <pubDate>Sat, 03 Aug 2013 00:00:00 UTC</pubDate>
+      <author>Enthusiastic Hugo User</author>
+      <guid>http://localhost:1313/2013/08/03/compile-and-reload-your-package-in-go-lang/</guid>
+      <description>&lt;p&gt;One of the Go lang goodness is the blazing fast compiler (can you hear me Scala? :P), that can give you the productivity of a interpreted language.
+But to be, productive in the same way, at least building Web services, you need get rid of the recompile and kill/reload cycle for your application.&lt;/p&gt;
+
+&lt;p&gt;I tried a couple of utils to do that, and the most simple that it works is &lt;a href=&#34;https://github.com/skelterjohn/rerun&#34;&gt;&lt;em&gt;rerun&lt;/em&gt;&lt;/a&gt;
+You can just clone the repository, do a &amp;lsquo;go install&amp;rsquo; and add the binary to your PATH variable.&lt;/p&gt;
+
+&lt;p&gt;And now with a simple:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;rerun --test github.com/dahernan/goangular/server
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I have my webserver running, and every time that I make a change in the code, the test are passed again, and the server is reload. I know, right now my server It&amp;rsquo;s very light and It does that in milliseconds, but I&amp;rsquo;m sure it&amp;rsquo;s not going to reach the start time of any Java application :)&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Json service in Go lang</title>
+      <link>http://localhost:1313/2013/06/21/json-service-in-go-lang/</link>
+      <pubDate>Fri, 21 Jun 2013 00:00:00 UTC</pubDate>
+      <author>Enthusiastic Hugo User</author>
+      <guid>http://localhost:1313/2013/06/21/json-service-in-go-lang/</guid>
+      <description>&lt;p&gt;These days I&amp;rsquo;m experimenting with Go lang, I love the language. I like specially the simplicity, you can check out
+the principles of design, in the presentation from Rob Pike, &lt;a href=&#34;http://www.stanford.edu/class/ee380/Abstracts/100428-pike-stanford.pdf&#34;&gt;Another Go At Language Design&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;So, my first try in Go is to do a small Rest API for serving JSON documents. Also try a little TDD in Go to see how easy it could be.&lt;/p&gt;
+
+&lt;p&gt;On the test it&amp;rsquo;s easy to mock whatever you need, because function are first class citizens,
+so you can have implementations on fly. And some of the clasess of the standard library they have test utilities like &amp;lsquo;httptest&amp;rsquo;&lt;/p&gt;
+
+&lt;p&gt;Here the test.&lt;/p&gt;
+
+&lt;p&gt;{% gist 6047770 %}&lt;/p&gt;
+
+&lt;p&gt;And now the implementation, with a little functional style.&lt;/p&gt;
+
+&lt;p&gt;{% gist 6047777 %}&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

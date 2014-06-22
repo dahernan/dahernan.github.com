@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+      <title>Elasticsearch on dahernan&#39;s blog </title>
+    <link>http://localhost:1313/tags/elasticsearch/index.xml</link>
+    <language>en-US</language>
+    <author>Enthusiastic Hugo User</author>
+    <rights>Copyright (c) 2014, Enthusiastic Hugo User; all rights reserved.</rights>
+    <updated>Sun, 04 Aug 2013 00:00:00 UTC</updated>
+    
+    <item>
+      <title>Docker to run Elasticsearch</title>
+      <link>http://localhost:1313/2013/08/04/docker-to-run-elasticsearch/</link>
+      <pubDate>Sun, 04 Aug 2013 00:00:00 UTC</pubDate>
+      <author>Enthusiastic Hugo User</author>
+      <guid>http://localhost:1313/2013/08/04/docker-to-run-elasticsearch/</guid>
+      <description>&lt;p&gt;In this post I&amp;rsquo;m going to explain how to create and use a docker image, for easy access to &lt;a href=&#34;http://www.elasticsearch.org&#34;&gt;elasticsearch&lt;/a&gt; for development purposes.
+If you don&amp;rsquo;t know &lt;a href=&#34;http://docker.io/&#34;&gt;docker&lt;/a&gt;, just check it out. In my opinion is the way that everybody is going to distribuite webapps soon.&lt;/p&gt;
+
+&lt;p&gt;In the same way that the project has library dependencies, your app usually depends on more things. Let&amp;rsquo;s say the database or in this case the search engine.
+Why not distribute the dependency with the code? Well even if you have a VM could be to much.&lt;/p&gt;
+
+&lt;p&gt;With containers that is over, now you can distribute with your source a Dockerfile, or even &lt;a href=&#34;http://blog.docker.io/2013/07/how-to-use-your-own-registry/&#34;&gt;have yor own repository of docker images&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;For my dependency &lt;a href=&#34;http://www.elasticsearch.org&#34;&gt;elasticsearch&lt;/a&gt; a need a new Dockerfile, so the next developer could reproduce my environment very easy.&lt;/p&gt;
+
+&lt;p&gt;So this is the content of my &lt;em&gt;Dockerfile&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;{% gist 6149626 %}&lt;/p&gt;
+
+&lt;p&gt;Now I can build the image with:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker build -t=&amp;quot;elasticsearch&amp;quot; .
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And after a while if I do:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker images
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;{% gist 6149703 %}&lt;/p&gt;
+
+&lt;p&gt;I can see my new image &lt;em&gt;elasticsearch&lt;/em&gt; there, and finally I can run elasticsearch in that container.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker run -d elasticsearch
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;{% gist 6149724 %}&lt;/p&gt;
+
+&lt;p&gt;Now my elasticsearch instance is running in its own container, forwarding the port 9200. So if I want to try to run a elasticsearch cluster, I&amp;rsquo;m only have to run more containers.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
