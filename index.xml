@@ -16,7 +16,7 @@
       <guid>http://dahernan.github.io/2014/12/03/scrap-the-web-with-go/</guid>
       <description>&lt;p&gt;As a part of a project that I&amp;rsquo;ve been involved, I released opensource a Scraper in Go that I called &lt;a href=&#34;https://github.com/dahernan/gopherscraper&#34;&gt;gopherscraper&lt;/a&gt; is a scraper to extract information of ecommerce sites, but you can extrapolate and extract information of any website with &amp;lsquo;items&amp;rsquo;, like news, videos, and so on.&lt;/p&gt;
 
-&lt;p&gt;The project comes with a Rest API that you can check on Github for more detail, and is based in CSS Selectors.
+&lt;p&gt;The project comes with a Rest API that you can &lt;a href=&#34;https://github.com/dahernan/gopherscraper&#34;&gt;check on Github&lt;/a&gt; for more detail, and is based in CSS Selectors.
 To store the items, I use Redis and ElasticSearch&lt;/p&gt;
 
 &lt;p&gt;I few keys, on the development for the library:&lt;/p&gt;
