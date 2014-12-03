@@ -132,6 +132,27 @@ func unlockLimitConnections() {
     </item>
     
     <item>
+      <title>Speaking at London Go Meetup</title>
+      <link>http://dahernan.github.io/2014/09/10/speaking-at-london-go-meetup/</link>
+      <pubDate>Wed, 10 Sep 2014 00:00:00 UTC</pubDate>
+      <author>Enthusiastic Hugo User</author>
+      <guid>http://dahernan.github.io/2014/09/10/speaking-at-london-go-meetup/</guid>
+      <description>&lt;p&gt;The Go London Meetup is the best place in London to learn Go and find gophers.
+As part of the meetup &lt;a href=&#34;http://www.meetup.com/Go-London-User-Group/events/203467502/&#34;&gt;I gave a talk&lt;/a&gt; about Go&amp;rsquo;s Testing Ecosystem.&lt;/p&gt;
+
+&lt;p&gt;You can get the code that I used for the examples, and the slides &lt;a href=&#34;https://github.com/dahernan/gophertest&#34;&gt;https://github.com/dahernan/gophertest&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;At the end more than a session about all testing ecosystem, I kind of live coding session about how I use &lt;a href=&#34;https://github.com/smartystreets/goconvey&#34;&gt;Goconvey&lt;/a&gt; to do testing.
+So it&amp;rsquo;s a pitty that there is no video for the talk.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;/images/gomeetup.jpeg&#34; alt=&#34;alt&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;I had good feedback, and the feeling of contribute back to the community.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Error handling and pointers in Go lang</title>
       <link>http://dahernan.github.io/2014/06/22/error-handling-and-pointers-in-go-lang/</link>
       <pubDate>Sun, 22 Jun 2014 00:00:00 UTC</pubDate>
