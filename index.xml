@@ -19,10 +19,10 @@
 &lt;p&gt;The project comes with a Rest API that you can &lt;a href=&#34;https://github.com/dahernan/gopherscraper&#34;&gt;check on Github&lt;/a&gt; for more detail, and is based in CSS Selectors.
 To store the items, I use Redis and ElasticSearch&lt;/p&gt;
 
-&lt;p&gt;I few keys, on the development for the library:&lt;/p&gt;
+&lt;p&gt;Let me share a few insights in the development of the library:&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;I&amp;rsquo;m using the library &lt;a href=&#34;https://github.com/PuerkitoBio/goquery&#34;&gt;Goquery&lt;/a&gt;, to extract information based on CSS Selectors&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;I&amp;rsquo;m using &lt;a href=&#34;https://github.com/PuerkitoBio/goquery&#34;&gt;Goquery&lt;/a&gt;, to extract information based on CSS Selectors&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;The interface for scrapping is really simple just one function&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
