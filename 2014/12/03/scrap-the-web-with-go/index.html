@@ -45,14 +45,14 @@
                     <p>As a part of a project that I&rsquo;ve been involved, I released opensource a Scraper in Go that I called <a href="https://github.com/dahernan/gopherscraper">gopherscraper</a> is a scraper to extract information of ecommerce sites, but you can extrapolate and extract information of any website with &lsquo;items&rsquo;, like news, videos, and so on.</p>
 
 <p>The project comes with a Rest API that you can <a href="https://github.com/dahernan/gopherscraper">check on Github</a> for more detail, and is based in CSS Selectors.
-To store the items, I use Redis and ElasticSearch</p>
+To store the items, I use Redis and ElasticSearch.</p>
 
 <p>Let me share a few insights in the development of the library:</p>
 
 <ul>
-<li><p>I&rsquo;m using <a href="https://github.com/PuerkitoBio/goquery">Goquery</a>, to extract information based on CSS Selectors</p></li>
+<li><p>I&rsquo;m using <a href="https://github.com/PuerkitoBio/goquery">Goquery</a>, to extract information based on CSS Selectors.</p></li>
 
-<li><p>The interface for scrapping is really simple just one function</p></li>
+<li><p>The interface for scrapping is really simple just one function.</p></li>
 </ul>
 
 <pre><code class="go">type ScrapperItems interface {
@@ -61,7 +61,7 @@ To store the items, I use Redis and ElasticSearch</p>
 </code></pre>
 
 <ul>
-<li>The interface to store the items that you scrap is also very simple, you can store the items in Redis, ElasticSearch or in local disk</li>
+<li>The interface to store the result items is also very simple. You can store the items in Redis, ElasticSearch or as a file.</li>
 </ul>
 
 <pre><code class="go">type StorageItems interface {
@@ -155,7 +155,7 @@ func unlockLimitConnections() {
 } 
 </code></pre>
 
-<p>At the end It was a really fun, doing what it looks like a tedious job, to get a clean JSON document when there is not any API available to use.</p>
+<p>At the end It was a really fun, doing what it looks like a tedious job. And I get a clean JSON document when there is not any API available to use.</p>
 
             </div>
             <div id="disqus_thread"></div>
@@ -179,7 +179,7 @@ func unlockLimitConnections() {
         <div class="col-md-3">
             <div class="well well-sm"> 
                 <h4>December 3, 2014<br>
-                <small>436 words</small></h4>
+                <small>435 words</small></h4>
                 <hr>
                 <strong>Categories</strong>
                 <ul class="list-unstyled">

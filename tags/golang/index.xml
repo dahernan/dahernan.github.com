@@ -17,14 +17,14 @@
       <description>&lt;p&gt;As a part of a project that I&amp;rsquo;ve been involved, I released opensource a Scraper in Go that I called &lt;a href=&#34;https://github.com/dahernan/gopherscraper&#34;&gt;gopherscraper&lt;/a&gt; is a scraper to extract information of ecommerce sites, but you can extrapolate and extract information of any website with &amp;lsquo;items&amp;rsquo;, like news, videos, and so on.&lt;/p&gt;
 
 &lt;p&gt;The project comes with a Rest API that you can &lt;a href=&#34;https://github.com/dahernan/gopherscraper&#34;&gt;check on Github&lt;/a&gt; for more detail, and is based in CSS Selectors.
-To store the items, I use Redis and ElasticSearch&lt;/p&gt;
+To store the items, I use Redis and ElasticSearch.&lt;/p&gt;
 
 &lt;p&gt;Let me share a few insights in the development of the library:&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;I&amp;rsquo;m using &lt;a href=&#34;https://github.com/PuerkitoBio/goquery&#34;&gt;Goquery&lt;/a&gt;, to extract information based on CSS Selectors&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;I&amp;rsquo;m using &lt;a href=&#34;https://github.com/PuerkitoBio/goquery&#34;&gt;Goquery&lt;/a&gt;, to extract information based on CSS Selectors.&lt;/p&gt;&lt;/li&gt;
 
-&lt;li&gt;&lt;p&gt;The interface for scrapping is really simple just one function&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The interface for scrapping is really simple just one function.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;pre&gt;&lt;code class=&#34;go&#34;&gt;type ScrapperItems interface {
@@ -33,7 +33,7 @@ To store the items, I use Redis and ElasticSearch&lt;/p&gt;
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;ul&gt;
-&lt;li&gt;The interface to store the items that you scrap is also very simple, you can store the items in Redis, ElasticSearch or in local disk&lt;/li&gt;
+&lt;li&gt;The interface to store the result items is also very simple. You can store the items in Redis, ElasticSearch or as a file.&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;pre&gt;&lt;code class=&#34;go&#34;&gt;type StorageItems interface {
@@ -127,7 +127,7 @@ func unlockLimitConnections() {
 } 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;At the end It was a really fun, doing what it looks like a tedious job, to get a clean JSON document when there is not any API available to use.&lt;/p&gt;
+&lt;p&gt;At the end It was a really fun, doing what it looks like a tedious job. And I get a clean JSON document when there is not any API available to use.&lt;/p&gt;
 </description>
     </item>
     
