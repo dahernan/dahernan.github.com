@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="David Hernandez"> 
+
+    <title>Scrap the Web with Go - http://dahernan.github.io</title>
+    <link rel="canonical" href="http://dahernan.github.io/2014/12/03/scrap-the-web-with-go/">
+    
+    <link href="http://dahernan.github.io/css/bootstrap.css" rel="stylesheet">
+    <link href="http://dahernan.github.io/css/font-awesome.css" rel="stylesheet">
+    <link href="http://dahernan.github.io/css/custom.css" rel="stylesheet">
+    
+</head>
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle Navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="http://dahernan.github.io">dahernan&#39;s blog</a>
+            </div>
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="http://dahernan.github.io/post/">Post Index</a></li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+<div class="container">
+    <div class="row">
+        <div class="col-md-9">
+            <div class="well well-sm">
+                    <h3>Scrap the Web with Go<br> <small></small></h3>
+                    <hr>
+                    <p>As a part of a project that I&rsquo;m involved, I did opensource a Scraper in Go I called <a href="https://github.com/dahernan/gopherscraper">gopherscraper</a> is a scraper implemented in Go to extract information of ecommerce sites, but you can extrapolate and extract information of any website with &lsquo;items&rsquo;, like news, videos, and so on.</p>
+
+<p>The project comes with a Rest API that you can check on Github for more detail, and is based in CSS Selectors.
+To store the items, I use Redis and ElasticSearch</p>
+
+<p>I few keys, on the development for the library:</p>
+
+<ul>
+<li><p>I&rsquo;m using the library <a href="https://github.com/PuerkitoBio/goquery">Goquery</a>, to extract information based on CSS Selectors</p></li>
+
+<li><p>The interface for scrapping is really simple just one function</p></li>
+</ul>
+
+<pre><code class="go">type ScrapperItems interface {
+    Scrap(selector ScrapSelector) (string, chan ItemResult, error)
+}
+</code></pre>
+
+<ul>
+<li>The interface to store the items that you scrap is also very simple, you can store the items in Redis, ElasticSearch or in local disk</li>
+</ul>
+
+<pre><code class="go">type StorageItems interface {
+    StoreItem(it ItemResult)
+}
+
+// store items as a File
+func (sto FileStorage) StoreItem(it ItemResult) {
+    if it.Err != nil {
+        return
+    }
+    WriteJsonToDisk(sto.baseDir, it.Item)
+}
+</code></pre>
+
+<ul>
+<li><p>Was easy to create a recursive Scraper, using composition, based in a normal scraper.</p></li>
+
+<li><p>I started with not concurrency code at all, and after make it work, I put the go routines and waitgroups to syncronize the completion of the scraper.</p></li>
+</ul>
+
+<pre><code class="go">func (d DefaultScrapper) Scrap(selector ScrapSelector) (string, chan ItemResult, error) {
+    wg := &amp;sync.WaitGroup{}
+    err := validateSelector(selector)
+    if err != nil {
+        return &quot;&quot;, nil, err
+    }
+
+    items := make(chan ItemResult, bufferItemsSize)
+
+    jobId := &quot;D&quot; + GenerateStringKey(selector)
+    pages := paginatedUrlSelector(selector)
+
+    wg.Add(len(pages))
+    for i, _ := range pages {
+        go doScrapFromUrl(jobId, pages[i], items, wg)
+    }
+
+    go closeItemsChannel(jobId, items, wg)
+
+    return jobId, items, err
+}
+
+func doScrapFromUrl(jobId string, s ScrapSelector, items chan ItemResult, wg *sync.WaitGroup) {
+    defer wg.Done()
+    doc, err := fromUrl(s)
+    if err != nil {
+        log.Printf(&quot;ERROR [%s] Scrapping %v with message %v&quot;, jobId, s.Url, err.Error())
+        return
+    }
+    DocumentScrap(jobId, s, doc, items)
+}
+
+func closeItemsChannel(jobId string, items chan ItemResult, wg *sync.WaitGroup) {
+    wg.Wait()
+    close(items)
+}
+</code></pre>
+
+<ul>
+<li>I limited the number of concurrent connections with a buffered channel.</li>
+</ul>
+
+<pre><code class="go">func fromUrl(selector ScrapSelector) (*goquery.Document, error) {
+    lockLimitConnections()
+    defer unlockLimitConnections()
+
+    req, err := http.NewRequest(&quot;GET&quot;, selector.Url, nil)
+    if err != nil {
+        return nil, err
+    }
+
+    req.Header.Add(&quot;User-Agent&quot;, defaultUserAgent)
+
+    res, err := httpClient().Do(req)
+    if err != nil {
+        return nil, err
+    }
+    return goquery.NewDocumentFromResponse(res)
+}
+
+func UseMaxConnections(max int) {
+    semaphoreMaxConnections = make(chan struct{}, max)
+}
+
+func lockLimitConnections() {
+    semaphoreMaxConnections &lt;- struct{}{}
+}
+func unlockLimitConnections() {
+    &lt;-semaphoreMaxConnections
+} 
+</code></pre>
+
+<p>At the end It was a really fun, doing what it looks like a tedious job, to get a clean JSON document when there is not any API available to use.</p>
+
+            </div>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'dahernan';
+    var disqus_identifier = 'http:\/\/dahernan.github.io\/2014\/12\/03\/scrap-the-web-with-go\/';
+    var disqus_title = 'Scrap the Web with Go';
+    var disqus_url = 'http:\/\/dahernan.github.io\/2014\/12\/03\/scrap-the-web-with-go\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+
+        
+        <div class="col-md-3">
+            <div class="well well-sm"> 
+                <h4>December 3, 2014<br>
+                <small>436 words</small></h4>
+                <hr>
+                <strong>Categories</strong>
+                <ul class="list-unstyled">
+                
+                </ul>
+                <hr>
+                <strong>Tags</strong><br>
+                <a class="label label-default" href="http://dahernan.github.io/tags/golang">golang</a> 
+            </div>
+                <div class="panel panel-default">
+        <div class="panel-heading" style="padding: 2px 15px;">
+            <h4>@dahernan</h4>
+        </div>
+        <div class="panel-body">
+            <img src="http://dahernan.github.io/images/profile.jpg" class="img-responsive img-thumbnail" alt="My profile image"/>
+            <a href="https://github.com/dahernan/" class="btn btn-primary btn-xs"><i class="fa fa-github-square fa-2x"></i></a>
+            <a href="https://www.twitter.com/dahernan" class="btn btn-info btn-xs"><i class="fa fa-twitter-square fa-2x"></i></a>
+            <a href="http://linkedin.com/in/dahernan" class="btn btn-info btn-xs"><i class="fa fa-linkedin-square fa-2x"></i></a>      
+        </div>
+    </div>
+        </div>
+    </div>
+        <footer>
+            <div class="row">
+                <hr>
+                <div class="col-sm-12">
+                    <p>&copy; David Hernandez 2014<br>
+                    Built with <a href="https://github.com/spf13/hugo">Hugo</a></p>
+                </div>
+            </div>
+        </footer>
+</div>
+
+    <script src="http://dahernan.github.io/js/jquery.js"></script>
+    <script src="http://dahernan.github.io/js/bootstrap.js"></script>
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-55935991-4', 'auto');
+  ga('send', 'pageview');
+</script>
+</body>
+</html>

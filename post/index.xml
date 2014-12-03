@@ -6,7 +6,130 @@
     <language>en-US</language>
     <author>Enthusiastic Hugo User</author>
     <rights>Copyright (c) 2014, Enthusiastic Hugo User; all rights reserved.</rights>
-    <updated>Sun, 22 Jun 2014 00:00:00 UTC</updated>
+    <updated>Wed, 03 Dec 2014 00:00:00 UTC</updated>
+    
+    <item>
+      <title>Scrap the Web with Go</title>
+      <link>http://dahernan.github.io/2014/12/03/scrap-the-web-with-go/</link>
+      <pubDate>Wed, 03 Dec 2014 00:00:00 UTC</pubDate>
+      <author>Enthusiastic Hugo User</author>
+      <guid>http://dahernan.github.io/2014/12/03/scrap-the-web-with-go/</guid>
+      <description>&lt;p&gt;As a part of a project that I&amp;rsquo;m involved, I did opensource a Scraper in Go I called &lt;a href=&#34;https://github.com/dahernan/gopherscraper&#34;&gt;gopherscraper&lt;/a&gt; is a scraper implemented in Go to extract information of ecommerce sites, but you can extrapolate and extract information of any website with &amp;lsquo;items&amp;rsquo;, like news, videos, and so on.&lt;/p&gt;
+
+&lt;p&gt;The project comes with a Rest API that you can check on Github for more detail, and is based in CSS Selectors.
+To store the items, I use Redis and ElasticSearch&lt;/p&gt;
+
+&lt;p&gt;I few keys, on the development for the library:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;I&amp;rsquo;m using the library &lt;a href=&#34;https://github.com/PuerkitoBio/goquery&#34;&gt;Goquery&lt;/a&gt;, to extract information based on CSS Selectors&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;The interface for scrapping is really simple just one function&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;type ScrapperItems interface {
+    Scrap(selector ScrapSelector) (string, chan ItemResult, error)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The interface to store the items that you scrap is also very simple, you can store the items in Redis, ElasticSearch or in local disk&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;type StorageItems interface {
+    StoreItem(it ItemResult)
+}
+
+// store items as a File
+func (sto FileStorage) StoreItem(it ItemResult) {
+    if it.Err != nil {
+        return
+    }
+    WriteJsonToDisk(sto.baseDir, it.Item)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Was easy to create a recursive Scraper, using composition, based in a normal scraper.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;I started with not concurrency code at all, and after make it work, I put the go routines and waitgroups to syncronize the completion of the scraper.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func (d DefaultScrapper) Scrap(selector ScrapSelector) (string, chan ItemResult, error) {
+    wg := &amp;amp;sync.WaitGroup{}
+    err := validateSelector(selector)
+    if err != nil {
+        return &amp;quot;&amp;quot;, nil, err
+    }
+
+    items := make(chan ItemResult, bufferItemsSize)
+
+    jobId := &amp;quot;D&amp;quot; + GenerateStringKey(selector)
+    pages := paginatedUrlSelector(selector)
+
+    wg.Add(len(pages))
+    for i, _ := range pages {
+        go doScrapFromUrl(jobId, pages[i], items, wg)
+    }
+
+    go closeItemsChannel(jobId, items, wg)
+
+    return jobId, items, err
+}
+
+func doScrapFromUrl(jobId string, s ScrapSelector, items chan ItemResult, wg *sync.WaitGroup) {
+    defer wg.Done()
+    doc, err := fromUrl(s)
+    if err != nil {
+        log.Printf(&amp;quot;ERROR [%s] Scrapping %v with message %v&amp;quot;, jobId, s.Url, err.Error())
+        return
+    }
+    DocumentScrap(jobId, s, doc, items)
+}
+
+func closeItemsChannel(jobId string, items chan ItemResult, wg *sync.WaitGroup) {
+    wg.Wait()
+    close(items)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;I limited the number of concurrent connections with a buffered channel.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func fromUrl(selector ScrapSelector) (*goquery.Document, error) {
+    lockLimitConnections()
+    defer unlockLimitConnections()
+
+    req, err := http.NewRequest(&amp;quot;GET&amp;quot;, selector.Url, nil)
+    if err != nil {
+        return nil, err
+    }
+
+    req.Header.Add(&amp;quot;User-Agent&amp;quot;, defaultUserAgent)
+
+    res, err := httpClient().Do(req)
+    if err != nil {
+        return nil, err
+    }
+    return goquery.NewDocumentFromResponse(res)
+}
+
+func UseMaxConnections(max int) {
+    semaphoreMaxConnections = make(chan struct{}, max)
+}
+
+func lockLimitConnections() {
+    semaphoreMaxConnections &amp;lt;- struct{}{}
+}
+func unlockLimitConnections() {
+    &amp;lt;-semaphoreMaxConnections
+} 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;At the end It was a really fun, doing what it looks like a tedious job, to get a clean JSON document when there is not any API available to use.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Error handling and pointers in Go lang</title>
