@@ -8,7 +8,7 @@ tags:
 
 As a part of a project that I've been involved, I released opensource a Scraper in Go that I called [gopherscraper](https://github.com/dahernan/gopherscraper) is a scraper to extract information of ecommerce sites, but you can extrapolate and extract information of any website with 'items', like news, videos, and so on.
 
-The project comes with a Rest API that you can check on Github for more detail, and is based in CSS Selectors.
+The project comes with a Rest API that you can [check on Github](https://github.com/dahernan/gopherscraper) for more detail, and is based in CSS Selectors.
 To store the items, I use Redis and ElasticSearch
 
 I few keys, on the development for the library:
