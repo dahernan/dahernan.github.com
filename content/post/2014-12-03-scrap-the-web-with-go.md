@@ -9,13 +9,13 @@ tags:
 As a part of a project that I've been involved, I released opensource a Scraper in Go that I called [gopherscraper](https://github.com/dahernan/gopherscraper) is a scraper to extract information of ecommerce sites, but you can extrapolate and extract information of any website with 'items', like news, videos, and so on.
 
 The project comes with a Rest API that you can [check on Github](https://github.com/dahernan/gopherscraper) for more detail, and is based in CSS Selectors.
-To store the items, I use Redis and ElasticSearch
+To store the items, I use Redis and ElasticSearch.
 
 Let me share a few insights in the development of the library:
 
-* I'm using [Goquery](https://github.com/PuerkitoBio/goquery), to extract information based on CSS Selectors
+* I'm using [Goquery](https://github.com/PuerkitoBio/goquery), to extract information based on CSS Selectors.
 
-* The interface for scrapping is really simple just one function
+* The interface for scrapping is really simple just one function.
 
 ```go
 type ScrapperItems interface {
@@ -23,7 +23,7 @@ type ScrapperItems interface {
 }
 ```
 
-* The interface to store the items that you scrap is also very simple, you can store the items in Redis, ElasticSearch or in local disk
+* The interface to store the result items is also very simple. You can store the items in Redis, ElasticSearch or as a file.
 
 ```go
 type StorageItems interface {
@@ -115,5 +115,5 @@ func unlockLimitConnections() {
 } 
 ```
 
-At the end It was a really fun, doing what it looks like a tedious job, to get a clean JSON document when there is not any API available to use.
+At the end It was a really fun, doing what it looks like a tedious job. And I get a clean JSON document when there is not any API available to use.
 
