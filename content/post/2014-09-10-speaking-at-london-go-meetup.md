@@ -11,8 +11,8 @@ As part of the meetup [I gave a talk](http://www.meetup.com/Go-London-User-Group
 
 You can get the code that I used for the examples, and the slides https://github.com/dahernan/gophertest
 
-At the end more than a session about all testing ecosystem, I kind of live coding session about how I use [Goconvey](https://github.com/smartystreets/goconvey) to do testing.
-So it's a pitty that there is no video for the talk.
+At the end more than a session about all testing ecosystem, was a kind of live coding session about how I use [Goconvey](https://github.com/smartystreets/goconvey) to do testing.
+So it's a pitty that there is no video for the talk, because the slides and the code is not very representative.
 
 ![alt](/images/gomeetup.jpeg)
 
