@@ -3,8 +3,13 @@
   
   <url>
     <loc>http://dahernan.github.io/</loc>
-    <lastmod>2014-12-03T00:00:00+00:00</lastmod>
+    <lastmod>2014-12-05T00:00:00+00:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://dahernan.github.io/2014/12/05/generate-a-dockerfile-for-go-microservice/</loc>
+    <lastmod>2014-12-05T00:00:00+00:00</lastmod>
   </url>
   
   <url>

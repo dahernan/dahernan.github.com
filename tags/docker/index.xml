@@ -6,7 +6,66 @@
     <language>en-US</language>
     <author>Enthusiastic Hugo User</author>
     <rights>Copyright (c) 2014, Enthusiastic Hugo User; all rights reserved.</rights>
-    <updated>Sun, 04 Aug 2013 00:00:00 UTC</updated>
+    <updated>Fri, 05 Dec 2014 00:00:00 UTC</updated>
+    
+    <item>
+      <title>Generate a Dockerfile for Go Microservice</title>
+      <link>http://dahernan.github.io/2014/12/05/generate-a-dockerfile-for-go-microservice/</link>
+      <pubDate>Fri, 05 Dec 2014 00:00:00 UTC</pubDate>
+      <author>Enthusiastic Hugo User</author>
+      <guid>http://dahernan.github.io/2014/12/05/generate-a-dockerfile-for-go-microservice/</guid>
+      <description>
+
+&lt;p&gt;As part of doing a few Go REST Services, for every project I usually put a Dockerfile to compile an run the project in a Docker container.
+The Dockerfile it&amp;rsquo;s always the same, just change it the project name, and I&amp;rsquo;m using &lt;a href=&#34;https://github.com/tools/godep&#34;&gt;godep&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;So in DRY spirit a did a Minimal Viable Script to generate the Dockerfile for me, the project is in Github and I called &lt;a href=&#34;https://github.com/dahernan/godockerize&#34;&gt;godockerize&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The Dockerfile is based in the golang image, it follows these steps.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Based in golang:stable&lt;/li&gt;
+&lt;li&gt;Use &lt;a href=&#34;https://github.com/tools/godep&#34;&gt;godep&lt;/a&gt; for vendoring the dependencies. (if you are not using godep, It will break).&lt;/li&gt;
+&lt;li&gt;Uses the project name and the root directory as a ENTRYPOINT&lt;/li&gt;
+&lt;li&gt;Restores the dependencies via &amp;lsquo;godep restore&amp;rsquo;&lt;/li&gt;
+&lt;li&gt;Compiles the project&lt;/li&gt;
+&lt;li&gt;Exposes the port&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Is inspired by this two blog post.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.charmes.net/2014/11/release-go-code-and-others-via-docker.html&#34;&gt;http://blog.charmes.net/2014/11/release-go-code-and-others-via-docker.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://blog.golang.org/docker&#34;&gt;https://blog.golang.org/docker&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;toc_0&#34;&gt;Install godockerize&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ go get github.com/dahernan/godockerize
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_1&#34;&gt;Usage Example&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;# Go to the root directory of your project, for example
+$ cd $GOPATH/src/github.com/dahernan/gopherscraper
+
+
+# Run godockerize exposing the port 3001
+$ godockerize -expose 3001
+
+Dockerfile generated, you can build the image with:
+$ docker build -t gopherscraper .
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_2&#34;&gt;Run my microservice&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker run --rm  -p 3001:3001 -e ES=192.168.1.101 gopherscraper
+
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>Docker to run Elasticsearch</title>

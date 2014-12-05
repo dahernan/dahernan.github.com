@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="David Hernandez"> 
+
+    <title>Generate a Dockerfile for Go Microservice - http://localhost:1313</title>
+    <link rel="canonical" href="http://localhost:1313/2013/10/14/generate-a-dockerfile-for-go-microservice/">
+    
+    <link href="http://localhost:1313/css/bootstrap.css" rel="stylesheet">
+    <link href="http://localhost:1313/css/font-awesome.css" rel="stylesheet">
+    <link href="http://localhost:1313/css/custom.css" rel="stylesheet">
+    
+</head>
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle Navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="http://localhost:1313">dahernan&#39;s blog</a>
+            </div>
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="http://localhost:1313/post/">Post Index</a></li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+<div class="container">
+    <div class="row">
+        <div class="col-md-9">
+            <div class="well well-sm">
+                    <h3>Generate a Dockerfile for Go Microservice<br> <small></small></h3>
+                    <hr>
+                    
+
+<p>As part of doing a few Go REST Services, for every project I usually put a Dockerfile to compile an run the project in a Docker container.
+The Dockerfile it&rsquo;s always the same, just change it the project name, and I&rsquo;m using <a href="https://github.com/tools/godep">godep</a>.</p>
+
+<p>So in DRY spirit a did a Minimal Viable Script to generate the Dockerfile for me, the project is in github and I called <a href="https://github.com/dahernan/godockerize">godockerize</a></p>
+
+<p>The Dockerfile is based in the golang image, it follows these steps.
+* Based in golang:stable
+* Use <a href="https://github.com/tools/godep">godep</a> for vendoring the dependencies. (if you are not using godep, It will break).
+* Uses the project name and the root directory as a ENTRYPOINT
+* Restores the dependencies via &lsquo;godep restore&rsquo;
+* Compiles the project
+* Exposes the port</p>
+
+<p>Is inspired by this two blog post.
+* <a href="http://blog.charmes.net/2014/11/release-go-code-and-others-via-docker.html?spref=tw">http://blog.charmes.net/2014/11/release-go-code-and-others-via-docker.html?spref=tw</a>
+* <a href="https://blog.golang.org/docker">https://blog.golang.org/docker</a></p>
+
+<h2 id="toc_0">Install</h2>
+
+<pre><code>$ go get github.com/dahernan/godockerize
+
+</code></pre>
+
+<h2 id="toc_1">Usage Example</h2>
+
+<pre><code># Go to the root directory of your project, for example
+$ cd $GOPATH/src/github.com/dahernan/gopherscraper
+
+
+# Run godockerize exposing the port 3001
+$ godockerize -expose 3001
+
+Dockerfile generated, you can build the image with:
+$ docker build -t gopherscraper .
+
+</code></pre>
+
+            </div>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'dahernan';
+    var disqus_identifier = 'http:\/\/localhost:1313\/2013\/10\/14\/generate-a-dockerfile-for-go-microservice\/';
+    var disqus_title = 'Generate a Dockerfile for Go Microservice';
+    var disqus_url = 'http:\/\/localhost:1313\/2013\/10\/14\/generate-a-dockerfile-for-go-microservice\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+
+        
+        <div class="col-md-3">
+            <div class="well well-sm"> 
+                <h4>October 14, 2013<br>
+                <small>184 words</small></h4>
+                <hr>
+                <strong>Categories</strong>
+                <ul class="list-unstyled">
+                
+                </ul>
+                <hr>
+                <strong>Tags</strong><br>
+                <a class="label label-default" href="http://localhost:1313/tags/golang">golang</a> <a class="label label-default" href="http://localhost:1313/tags/docker">docker</a> 
+            </div>
+                <div class="panel panel-default">
+        <div class="panel-heading" style="padding: 2px 15px;">
+            <h4>@dahernan</h4>
+        </div>
+        <div class="panel-body">
+            <img src="http://localhost:1313/images/profile.jpg" class="img-responsive img-thumbnail" alt="My profile image"/>
+            <a href="https://github.com/dahernan/" class="btn btn-primary btn-xs"><i class="fa fa-github-square fa-2x"></i></a>
+            <a href="https://www.twitter.com/dahernan" class="btn btn-info btn-xs"><i class="fa fa-twitter-square fa-2x"></i></a>
+            <a href="http://linkedin.com/in/dahernan" class="btn btn-info btn-xs"><i class="fa fa-linkedin-square fa-2x"></i></a>      
+        </div>
+    </div>
+        </div>
+    </div>
+        <footer>
+            <div class="row">
+                <hr>
+                <div class="col-sm-12">
+                    <p>&copy; David Hernandez 2014<br>
+                    Built with <a href="https://github.com/spf13/hugo">Hugo</a></p>
+                </div>
+            </div>
+        </footer>
+</div>
+
+    <script src="http://localhost:1313/js/jquery.js"></script>
+    <script src="http://localhost:1313/js/bootstrap.js"></script>
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-55935991-4', 'auto');
+  ga('send', 'pageview');
+</script>
+<script>document.write('<script src="http://'
+        + (location.host || 'localhost').split(':')[0]
+		+ ':1313/livereload.js?mindelay=10"></'
+        + 'script>')</script></body>
+</html>
