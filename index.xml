@@ -6,7 +6,67 @@
     <language>en-US</language>
     <author>Enthusiastic Hugo User</author>
     <rights>Copyright (c) 2014, Enthusiastic Hugo User; all rights reserved.</rights>
-    <updated>Fri, 05 Dec 2014 00:00:00 UTC</updated>
+    <updated>Tue, 09 Dec 2014 00:00:00 UTC</updated>
+    
+    <item>
+      <title>Docker image for Go service from the Scratch</title>
+      <link>http://dahernan.github.io/2014/12/09/docker-image-for-go-service-from-the-scratch/</link>
+      <pubDate>Tue, 09 Dec 2014 00:00:00 UTC</pubDate>
+      <author>Enthusiastic Hugo User</author>
+      <guid>http://dahernan.github.io/2014/12/09/docker-image-for-go-service-from-the-scratch/</guid>
+      <description>
+
+&lt;p&gt;Today I changed the script to dockerize go projects &lt;a href=&#34;https://github.com/dahernan/godockerize&#34;&gt;godockerize&lt;/a&gt;, to support the &amp;lsquo;scratch&amp;rsquo; image.&lt;/p&gt;
+
+&lt;p&gt;The way I do it, is cross compile for Linux, and after that add the binary to the image, that&amp;rsquo;s all. Ready to build and run.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_0&#34;&gt;To enable cross compile on Mac to build Linux executable&lt;/h3&gt;
+
+&lt;p&gt;Follow this steps&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cd /usr/local/go/src
+
+$ sudo GOOS=linux CGO_ENABLED=0 ./make.bash --no-clean
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can try it doing, for example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ GOOS=linux CGO_ENABLED=0 go build -o gopherscraper
+
+# Checking that is linux binary
+$ file gopherscraper
+gopherscraper: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, not stripped
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;toc_1&#34;&gt;Use the new flag &amp;lsquo;scratch&amp;rsquo;&lt;/h2&gt;
+
+&lt;p&gt;Once you activate cross compilation you can use the new flag to generate and build the Docker image from the &amp;lsquo;scratch&amp;rsquo;&lt;/p&gt;
+
+&lt;p&gt;For example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cd $GOPATH/src/github.com/dahernan/gopherscraper
+
+# Run godockerize using -scratch
+$ godockerize -expose 3001 -scratch
+
+Dockerfile generated, you can build the image with:
+$ docker build -t gopherscraper .
+
+
+# Run my microservice
+$ docker run --rm  -p 3001:3001 -e ES=192.168.1.101 gopherscraper
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can get a really light image, using this method :)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;REPOSITORY                    TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+gopherscraper                 latest              8dad2e0ca7f9        55 minutes ago      10.61 MB
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>Generate a Dockerfile for Go Microservice</title>
