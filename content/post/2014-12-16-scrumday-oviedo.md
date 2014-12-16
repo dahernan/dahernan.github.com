@@ -7,7 +7,7 @@ tags:
   - "agile"
 ---
 
-Last Saturday I was speaking in the [ScrumDay Oviedo](http://scrumdayoviedo.com/), just 30 km away from my home (Gijon) hehehe.
+Last Saturday I was speaking in the [ScrumDay Oviedo](http://scrumdayoviedo.com/), just 30 km away from my home city (Gijon) hehehe.
 I was invited by [Raul Herranz](https://twitter.com/raul_herranz) and his company [Utopica Informatica](http://utopicainformatica.com/).
 
 My talk title could be translated to "Five advices to improve doing Scrum" [(slides in Spanish)](https://docs.google.com/presentation/d/1J-Y63hUcuE8HgFFg195Qd2R5Z2dfclXoaDhU7_289fM),
