@@ -22,7 +22,7 @@ despite talking about Scrum, the advices could be apply to any Agile practice.
 Was a little bit difficult speak in Spanish, I dont't use the language for work since 6 years ago, so I don't know if some of the terms are translated or not, and it's not easy to find the right word.
 
 The people asked a lot of questions about [Continuous Delivery](http://dahernan.github.io/2013/10/14/continuous-deployment-trends/), they were very interested about the topic.
-At the end I was happy with the result, is good to contribute back is some way to your home community.
+At the end I was happy with the result, is good to contribute back in some way to your home community.
 
 I spent the rest of the day as public, were I really enjoyed the talk by [Angélica](https://twitter.com/alozalv)
 and the care that [Javier Alonso](https://twitter.com/oyabun) puts in the design of the slides.
