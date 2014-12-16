@@ -6,7 +6,45 @@
     <language>en-US</language>
     <author>Enthusiastic Hugo User</author>
     <rights>Copyright (c) 2014, Enthusiastic Hugo User; all rights reserved.</rights>
-    <updated>Tue, 09 Dec 2014 00:00:00 UTC</updated>
+    <updated>Tue, 16 Dec 2014 00:00:00 UTC</updated>
+    
+    <item>
+      <title>Speaking at the Scrumday Oviedo</title>
+      <link>http://dahernan.github.io/2014/12/16/speaking-at-the-scrumday-oviedo/</link>
+      <pubDate>Tue, 16 Dec 2014 00:00:00 UTC</pubDate>
+      <author>Enthusiastic Hugo User</author>
+      <guid>http://dahernan.github.io/2014/12/16/speaking-at-the-scrumday-oviedo/</guid>
+      <description>&lt;p&gt;Last Saturday I was speaking in the &lt;a href=&#34;http://scrumdayoviedo.com/&#34;&gt;ScrumDay Oviedo&lt;/a&gt;, just 30 km away from my home (Gijon) hehehe.
+I was invited by &lt;a href=&#34;https://twitter.com/raul_herranz&#34;&gt;Raul Herranz&lt;/a&gt; and his company &lt;a href=&#34;http://utopicainformatica.com/&#34;&gt;Utopica Informatica&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;My talk title could be translated to &amp;ldquo;Five advices to improve doing Scrum&amp;rdquo; &lt;a href=&#34;https://docs.google.com/presentation/d/1J-Y63hUcuE8HgFFg195Qd2R5Z2dfclXoaDhU7_289fM&#34;&gt;(slides in Spanish)&lt;/a&gt;,
+despite talking about Scrum, the advices could be apply to any Agile practice.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;/images/scrum_day1.png&#34; alt=&#34;alt&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://twitter.com/adelatorrefoss&#34;&gt;Antonio de la Torre&lt;/a&gt; did a good sketch to summarize the talk :)&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;/images/scrum_day2.png&#34; alt=&#34;alt&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Was a little bit difficult speak in Spanish, I dont&amp;rsquo;t use the language for work since 6 years ago, so I don&amp;rsquo;t know if some of the terms are translated or not, and it&amp;rsquo;s not easy to find the right word.&lt;/p&gt;
+
+&lt;p&gt;The people asked a lot of questions about &lt;a href=&#34;http://dahernan.github.io/2013/10/14/continuous-deployment-trends/&#34;&gt;Continuous Delivery&lt;/a&gt;, they were very interested about the topic.
+At the end I was happy with the result, is good to contribute back is some way to your home community.&lt;/p&gt;
+
+&lt;p&gt;I spent the rest of the day as public, were I really enjoyed the talk by &lt;a href=&#34;https://twitter.com/alozalv&#34;&gt;Angélica&lt;/a&gt;
+and the care that &lt;a href=&#34;https://twitter.com/oyabun&#34;&gt;Javier Alonso&lt;/a&gt; puts in the design of the slides.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;/images/scrum_day3.png&#34; alt=&#34;alt&#34; /&gt;
+
+&lt;img src=&#34;/images/scrum_day4.png&#34; alt=&#34;alt&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;I usually try to mingle and meet new people in these kind of events but this time I was so happy to talk with old friends that I forgot that part for a bit.
+Overall, a really nice experience that I hope I can repeat.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Docker image for Go service from the Scratch</title>
