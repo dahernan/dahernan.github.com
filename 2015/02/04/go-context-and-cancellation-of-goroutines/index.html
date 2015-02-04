@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="David Hernandez"> 
+
+    <title>Go: Context and Cancellation of goroutines - http://localhost:1313</title>
+    <link rel="canonical" href="http://localhost:1313/2015/02/04/go-context-and-cancellation-of-goroutines/">
+    
+    <link href="http://localhost:1313/css/bootstrap.css" rel="stylesheet">
+    <link href="http://localhost:1313/css/font-awesome.css" rel="stylesheet">
+    <link href="http://localhost:1313/css/custom.css" rel="stylesheet">
+    
+</head>
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle Navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="http://localhost:1313">dahernan&#39;s blog</a>
+            </div>
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="http://localhost:1313/post/">Post Index</a></li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+<div class="container">
+    <div class="row">
+        <div class="col-md-9">
+            <div class="well well-sm">
+                    <h3>Go: Context and Cancellation of goroutines<br> <small></small></h3>
+                    <hr>
+                    <p>Yesterday I went to the event London Go Gathering, where all the talks had a great level, but particulary <a href="https://twitter.com/peterbourgon">Peter Bourgon</a> gave me idea to write about the excelent package <a href="http://blog.golang.org/context">context</a>.</p>
+
+<p>Context is used to pass request scoped variables, but in this case I&rsquo;m only going to focus in cancelation signals.</p>
+
+<p>Lets say that I have a program that it runs a long running function, in this case <code>work</code> and we run it in a separate go routine.</p>
+
+<pre><code class="go">package main
+
+import (
+    &quot;fmt&quot;
+    &quot;sync&quot;
+    &quot;time&quot;
+
+)
+
+var (
+    wg sync.WaitGroup
+)
+
+func work() error {
+    defer wg.Done()
+
+    for i := 0; i &lt; 1000; i++ {
+        select {
+        case &lt;-time.After(2 * time.Second):
+            fmt.Println(&quot;Doing some work &quot;, i)
+        }
+    }
+    return nil
+}
+
+
+func main() {
+    fmt.Println(&quot;Hey, I'm going to do some work&quot;)
+
+    wg.Add(1)
+    go work()
+    wg.Wait()
+
+    fmt.Println(&quot;Finished. I'm going home&quot;)
+}
+</code></pre>
+
+<pre><code>$ go run work.go
+Hey, I'm going to do some work
+Doing some work  0
+Doing some work  1
+Doing some work  2
+Doing some work  3
+...
+Doing some work  999
+Finished. I'm going home
+</code></pre>
+
+<p>Now imagine that we have to call that <code>work</code> function from a user interaction or a http request, we probably don&rsquo;t want to wait forever for that goroutine to finish, so a common pattern is to set a timeout, using a buffered channel, like this:</p>
+
+<pre><code class="go">package main
+
+import (
+    &quot;fmt&quot;
+    &quot;log&quot;
+    &quot;time&quot;
+)
+
+func work() error {
+    for i := 0; i &lt; 1000; i++ {
+        select {
+        case &lt;-time.After(2 * time.Second):
+            fmt.Println(&quot;Doing some work &quot;, i)
+        }
+    }
+    return nil
+}
+
+func main() {
+    fmt.Println(&quot;Hey, I'm going to do some work&quot;)
+
+    ch := make(chan error, 1)
+    go func() {
+        ch &lt;- work()
+    }()
+
+    select {
+    case err := &lt;-ch:
+        if err != nil {
+            log.Fatal(&quot;Something went wrong :(&quot;, err)
+        }
+    case &lt;-time.After(4 * time.Second):
+        fmt.Println(&quot;Life is to short to wait that long&quot;)
+    }
+
+    fmt.Println(&quot;Finished. I'm going home&quot;)
+}
+
+</code></pre>
+
+<pre><code>$ go run work.go
+Hey, I'm going to do some work
+Doing some work  0
+Doing some work  1
+Life is to short to wait that long
+Finished. I'm going home
+</code></pre>
+
+<p>Now, is a little bit better because, the main execution doesn&rsquo;t have to wait for <code>work</code> if the timeout is reached.</p>
+
+<p>But It has a problem, if my program is still running like for example a web server, even if I don&rsquo;t wait for the function <code>work</code> to finish, the goroutine it would be running and consuming resources. So I need a way to cancel that goroutine.</p>
+
+<p>For cancelation of the goroutine we can use the context package. We have to change the function to accept an argument of type <code>context.Context</code>, by convention it usuallly the first argument.</p>
+
+<pre><code class="go">package main
+
+import (
+    &quot;fmt&quot;
+    &quot;sync&quot;
+    &quot;time&quot;
+
+    &quot;golang.org/x/net/context&quot;
+)
+
+var (
+    wg sync.WaitGroup
+)
+
+func work(ctx context.Context) error {
+    defer wg.Done()
+
+    for i := 0; i &lt; 1000; i++ {
+        select {
+        case &lt;-time.After(2 * time.Second):
+            fmt.Println(&quot;Doing some work &quot;, i)
+
+        // we received the signal of cancelation in this channel    
+        case &lt;-ctx.Done():
+            fmt.Println(&quot;Cancel the context &quot;, i)
+            return ctx.Err()
+        }
+    }
+    return nil
+}
+
+func main() {   
+    ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
+    defer cancel()
+
+    fmt.Println(&quot;Hey, I'm going to do some work&quot;)
+
+    wg.Add(1)
+    go work(ctx)
+    wg.Wait()
+
+    fmt.Println(&quot;Finished. I'm going home&quot;)
+}
+
+</code></pre>
+
+<pre><code>$ go run work.go
+Hey, I'm going to do some work
+Doing some work  0
+Cancel the context  1
+Finished. I'm going home
+</code></pre>
+
+<p>This is pretty good!, apart that the code looks more simple to manage the timeout, now we are making sure that the function <code>work</code> doesn&rsquo;t waste any resource.</p>
+
+<p>These examples are good to learn the basics, but let&rsquo;s try to make it more real.
+Now the <code>work</code> function is going to do an http request to a server and the server is going to be this other program:</p>
+
+<pre><code class="go">package main
+
+// Lazy and Very Random Server 
+import (
+    &quot;fmt&quot;
+    &quot;math/rand&quot;
+    &quot;net/http&quot;
+    &quot;time&quot;
+)
+
+func main() {
+    http.HandleFunc(&quot;/&quot;, LazyServer)
+    http.ListenAndServe(&quot;:1111&quot;, nil)
+}
+
+// sometimes really fast server, sometimes really slow server
+func LazyServer(w http.ResponseWriter, req *http.Request) {
+    headOrTails := rand.Intn(2)
+
+    if headOrTails == 0 {
+        time.Sleep(6 * time.Second)
+        fmt.Fprintf(w, &quot;Go! slow %v&quot;, headOrTails)
+        fmt.Printf(&quot;Go! slow %v&quot;, headOrTails)
+        return
+    }
+
+    fmt.Fprintf(w, &quot;Go! quick %v&quot;, headOrTails)
+    fmt.Printf(&quot;Go! quick %v&quot;, headOrTails)
+    return
+}
+</code></pre>
+
+<p>Randomly is going to be very quick or very slow, we can check that with <code>curl</code></p>
+
+<pre><code>$ curl http://localhost:1111/
+Go! quick 1
+$ curl http://localhost:1111/
+Go! quick 1
+$ curl http://localhost:1111/
+Go! slow 0
+</code></pre>
+
+<p>So we are going to make an http request to this server, in a goroutine, but if the server is slow we are going to Cancel the request and return quickly, so we can manage the cancellation and free the connection.</p>
+
+<pre><code class="go">package main
+
+import (
+    &quot;fmt&quot;
+    &quot;io/ioutil&quot;
+    &quot;net/http&quot;
+    &quot;sync&quot;
+    &quot;time&quot;
+
+    &quot;golang.org/x/net/context&quot;
+)
+
+var (
+    wg sync.WaitGroup
+)
+
+// main is not changed
+func main() {
+    ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+    defer cancel()
+
+    fmt.Println(&quot;Hey, I'm going to do some work&quot;)
+
+    wg.Add(1)
+    go work(ctx)
+    wg.Wait()
+
+    fmt.Println(&quot;Finished. I'm going home&quot;)
+
+}
+
+func work(ctx context.Context) error {
+    defer wg.Done()
+
+    tr := &amp;http.Transport{}
+    client := &amp;http.Client{Transport: tr}
+
+    // anonymous struct to pack and unpack data in the channel
+    c := make(chan struct {
+        r   *http.Response
+        err error
+    }, 1)
+
+    req, _ := http.NewRequest(&quot;GET&quot;, &quot;http://localhost:1111&quot;, nil)
+    go func() {
+        resp, err := client.Do(req)
+        fmt.Println(&quot;Doing http request is a hard job&quot;)
+        pack := struct {
+            r   *http.Response
+            err error
+        }{resp, err}
+        c &lt;- pack
+    }()
+
+    select {
+    case &lt;-ctx.Done():
+        tr.CancelRequest(req)
+        &lt;-c // Wait for client.Do
+        fmt.Println(&quot;Cancel the context&quot;)
+        return ctx.Err()
+    case ok := &lt;-c:
+        err := ok.err
+        resp := ok.r
+        if err != nil {
+            fmt.Println(&quot;Error &quot;, err)
+            return err
+        }
+
+        defer resp.Body.Close()
+        out, _ := ioutil.ReadAll(resp.Body)
+        fmt.Printf(&quot;Server Response: %s\n&quot;, out)
+
+    }
+    return nil
+}
+</code></pre>
+
+<pre><code>$ go run work.go
+Hey, I'm going to do some work
+Doing http request is a hard job
+Server Response: Go! quick 1
+Finished. I'm going home
+
+$ go run work.go
+Hey, I'm going to do some work
+Doing http request is a hard job
+Cancel the context
+Finished. I'm going home
+</code></pre>
+
+<p>As you can see in the output, we avoid the slow responses from the server.</p>
+
+<p>In the client the tcp connection is canceled so is not going to be busy waiting for a slow response, so we don&rsquo;t waste resources.</p>
+
+<p>Happy coding gophers!.</p>
+
+            </div>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'dahernan';
+    var disqus_identifier = 'http:\/\/localhost:1313\/2015\/02\/04\/go-context-and-cancellation-of-goroutines\/';
+    var disqus_title = 'Go: Context and Cancellation of goroutines';
+    var disqus_url = 'http:\/\/localhost:1313\/2015\/02\/04\/go-context-and-cancellation-of-goroutines\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+
+        
+        <div class="col-md-3">
+            <div class="well well-sm"> 
+                <h4>February 4, 2015<br>
+                <small>1035 words</small></h4>
+                <hr>
+                <strong>Categories</strong>
+                <ul class="list-unstyled">
+                
+                </ul>
+                <hr>
+                <strong>Tags</strong><br>
+                <a class="label label-default" href="http://localhost:1313/tags/golang">golang</a> 
+            </div>
+                <div class="panel panel-default">
+        <div class="panel-heading" style="padding: 2px 15px;">
+            <h4>@dahernan</h4>
+        </div>
+        <div class="panel-body">
+            <img src="http://localhost:1313/images/profile.jpg" class="img-responsive img-thumbnail" alt="My profile image"/>
+            <a href="https://github.com/dahernan/" class="btn btn-primary btn-xs"><i class="fa fa-github-square fa-2x"></i></a>
+            <a href="https://www.twitter.com/dahernan" class="btn btn-info btn-xs"><i class="fa fa-twitter-square fa-2x"></i></a>
+            <a href="http://linkedin.com/in/dahernan" class="btn btn-info btn-xs"><i class="fa fa-linkedin-square fa-2x"></i></a>      
+        </div>
+    </div>
+        </div>
+    </div>
+        <footer>
+            <div class="row">
+                <hr>
+                <div class="col-sm-12">
+                    <p>&copy; David Hernandez 2014<br>
+                    Built with <a href="https://github.com/spf13/hugo">Hugo</a></p>
+                </div>
+            </div>
+        </footer>
+</div>
+
+    <script src="http://localhost:1313/js/jquery.js"></script>
+    <script src="http://localhost:1313/js/bootstrap.js"></script>
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-55935991-4', 'auto');
+  ga('send', 'pageview');
+</script>
+<script>document.write('<script src="http://'
+        + (location.host || 'localhost').split(':')[0]
+		+ ':1313/livereload.js?mindelay=10"></'
+        + 'script>')</script></body>
+</html>

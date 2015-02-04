@@ -6,7 +6,324 @@
     <language>en-US</language>
     <author>Enthusiastic Hugo User</author>
     <rights>Copyright (c) 2014, Enthusiastic Hugo User; all rights reserved.</rights>
-    <updated>Tue, 09 Dec 2014 00:00:00 UTC</updated>
+    <updated>Wed, 04 Feb 2015 00:00:00 UTC</updated>
+    
+    <item>
+      <title>Context and Cancellation of goroutines</title>
+      <link>http://dahernan.github.io/2015/02/04/context-and-cancellation-of-goroutines/</link>
+      <pubDate>Wed, 04 Feb 2015 00:00:00 UTC</pubDate>
+      <author>Enthusiastic Hugo User</author>
+      <guid>http://dahernan.github.io/2015/02/04/context-and-cancellation-of-goroutines/</guid>
+      <description>&lt;p&gt;Yesterday I went to the event London Go Gathering, where all the talks had a great level, but particulary &lt;a href=&#34;https://twitter.com/peterbourgon&#34;&gt;Peter Bourgon&lt;/a&gt; gave me idea to write about the excelent package &lt;a href=&#34;http://blog.golang.org/context&#34;&gt;context&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Context is used to pass request scoped variables, but in this case I&amp;rsquo;m only going to focus in cancelation signals.&lt;/p&gt;
+
+&lt;p&gt;Lets say that I have a program that execute a long running function, in this case &lt;code&gt;work&lt;/code&gt; and we run it in a separate go routine.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;package main
+
+import (
+    &amp;quot;fmt&amp;quot;
+    &amp;quot;sync&amp;quot;
+    &amp;quot;time&amp;quot;
+
+)
+
+var (
+    wg sync.WaitGroup
+)
+
+func work() error {
+    defer wg.Done()
+
+    for i := 0; i &amp;lt; 1000; i++ {
+        select {
+        case &amp;lt;-time.After(2 * time.Second):
+            fmt.Println(&amp;quot;Doing some work &amp;quot;, i)
+        }
+    }
+    return nil
+}
+
+
+func main() {
+    fmt.Println(&amp;quot;Hey, I&#39;m going to do some work&amp;quot;)
+
+    wg.Add(1)
+    go work()
+    wg.Wait()
+
+    fmt.Println(&amp;quot;Finished. I&#39;m going home&amp;quot;)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;$ go run work.go
+Hey, I&#39;m going to do some work
+Doing some work  0
+Doing some work  1
+Doing some work  2
+Doing some work  3
+...
+Doing some work  999
+Finished. I&#39;m going home
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now imagine that we have to call that &lt;code&gt;work&lt;/code&gt; function from a user interaction or a http request, we probably don&amp;rsquo;t want to wait forever for that goroutine to finish, so a common pattern is to set a timeout, using a buffered channel, like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;package main
+
+import (
+    &amp;quot;fmt&amp;quot;
+    &amp;quot;log&amp;quot;
+    &amp;quot;time&amp;quot;
+)
+
+func work() error {
+    for i := 0; i &amp;lt; 1000; i++ {
+        select {
+        case &amp;lt;-time.After(2 * time.Second):
+            fmt.Println(&amp;quot;Doing some work &amp;quot;, i)
+        }
+    }
+    return nil
+}
+
+func main() {
+    fmt.Println(&amp;quot;Hey, I&#39;m going to do some work&amp;quot;)
+
+    ch := make(chan error, 1)
+    go func() {
+        ch &amp;lt;- work()
+    }()
+
+    select {
+    case err := &amp;lt;-ch:
+        if err != nil {
+            log.Fatal(&amp;quot;Something went wrong :(&amp;quot;, err)
+        }
+    case &amp;lt;-time.After(4 * time.Second):
+        fmt.Println(&amp;quot;Life is to short to wait that long&amp;quot;)
+    }
+
+    fmt.Println(&amp;quot;Finished. I&#39;m going home&amp;quot;)
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;$ go run work.go
+Hey, I&#39;m going to do some work
+Doing some work  0
+Doing some work  1
+Life is to short to wait that long
+Finished. I&#39;m going home
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, is a little bit better because, the main execution doesn&amp;rsquo;t have to wait for &lt;code&gt;work&lt;/code&gt; if it&amp;rsquo;s timing out.&lt;/p&gt;
+
+&lt;p&gt;But it has a problem, if my program is still running like for example a web server, even if I don&amp;rsquo;t wait for the function &lt;code&gt;work&lt;/code&gt; to finish, the goroutine it would be running and consuming resources. So I need a way to cancel that goroutine.&lt;/p&gt;
+
+&lt;p&gt;For cancelation of the goroutine we can use the context package. We have to change the function to accept an argument of type &lt;code&gt;context.Context&lt;/code&gt;, by convention it&amp;rsquo;s usuallly the first argument.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;package main
+
+import (
+    &amp;quot;fmt&amp;quot;
+    &amp;quot;sync&amp;quot;
+    &amp;quot;time&amp;quot;
+
+    &amp;quot;golang.org/x/net/context&amp;quot;
+)
+
+var (
+    wg sync.WaitGroup
+)
+
+func work(ctx context.Context) error {
+    defer wg.Done()
+
+    for i := 0; i &amp;lt; 1000; i++ {
+        select {
+        case &amp;lt;-time.After(2 * time.Second):
+            fmt.Println(&amp;quot;Doing some work &amp;quot;, i)
+
+        // we received the signal of cancelation in this channel    
+        case &amp;lt;-ctx.Done():
+            fmt.Println(&amp;quot;Cancel the context &amp;quot;, i)
+            return ctx.Err()
+        }
+    }
+    return nil
+}
+
+func main() {   
+    ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
+    defer cancel()
+
+    fmt.Println(&amp;quot;Hey, I&#39;m going to do some work&amp;quot;)
+
+    wg.Add(1)
+    go work(ctx)
+    wg.Wait()
+
+    fmt.Println(&amp;quot;Finished. I&#39;m going home&amp;quot;)
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;$ go run work.go
+Hey, I&#39;m going to do some work
+Doing some work  0
+Cancel the context  1
+Finished. I&#39;m going home
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is pretty good!, apart that the code looks more simple to manage the timeout, now we are making sure that the function &lt;code&gt;work&lt;/code&gt; doesn&amp;rsquo;t waste any resource.&lt;/p&gt;
+
+&lt;p&gt;These examples are good to learn the basics, but let&amp;rsquo;s try to make it more real.
+Now the &lt;code&gt;work&lt;/code&gt; function is going to do an http request to a server and the server is going to be this other program:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;package main
+
+// Lazy and Very Random Server 
+import (
+    &amp;quot;fmt&amp;quot;
+    &amp;quot;math/rand&amp;quot;
+    &amp;quot;net/http&amp;quot;
+    &amp;quot;time&amp;quot;
+)
+
+func main() {
+    http.HandleFunc(&amp;quot;/&amp;quot;, LazyServer)
+    http.ListenAndServe(&amp;quot;:1111&amp;quot;, nil)
+}
+
+// sometimes really fast server, sometimes really slow server
+func LazyServer(w http.ResponseWriter, req *http.Request) {
+    headOrTails := rand.Intn(2)
+
+    if headOrTails == 0 {
+        time.Sleep(6 * time.Second)
+        fmt.Fprintf(w, &amp;quot;Go! slow %v&amp;quot;, headOrTails)
+        fmt.Printf(&amp;quot;Go! slow %v&amp;quot;, headOrTails)
+        return
+    }
+
+    fmt.Fprintf(w, &amp;quot;Go! quick %v&amp;quot;, headOrTails)
+    fmt.Printf(&amp;quot;Go! quick %v&amp;quot;, headOrTails)
+    return
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Randomly is going to be very quick or very slow, we can check that with &lt;code&gt;curl&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ curl http://localhost:1111/
+Go! quick 1
+$ curl http://localhost:1111/
+Go! quick 1
+$ curl http://localhost:1111/
+*some seconds later*
+Go! slow 0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;So we are going to make an http request to this server, in a goroutine, but if the server is slow we are going to Cancel the request and return quickly, so we can manage the cancellation and free the connection.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;package main
+
+import (
+    &amp;quot;fmt&amp;quot;
+    &amp;quot;io/ioutil&amp;quot;
+    &amp;quot;net/http&amp;quot;
+    &amp;quot;sync&amp;quot;
+    &amp;quot;time&amp;quot;
+
+    &amp;quot;golang.org/x/net/context&amp;quot;
+)
+
+var (
+    wg sync.WaitGroup
+)
+
+// main is not changed
+func main() {
+    ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+    defer cancel()
+
+    fmt.Println(&amp;quot;Hey, I&#39;m going to do some work&amp;quot;)
+
+    wg.Add(1)
+    go work(ctx)
+    wg.Wait()
+
+    fmt.Println(&amp;quot;Finished. I&#39;m going home&amp;quot;)
+
+}
+
+func work(ctx context.Context) error {
+    defer wg.Done()
+
+    tr := &amp;amp;http.Transport{}
+    client := &amp;amp;http.Client{Transport: tr}
+
+    // anonymous struct to pack and unpack data in the channel
+    c := make(chan struct {
+        r   *http.Response
+        err error
+    }, 1)
+
+    req, _ := http.NewRequest(&amp;quot;GET&amp;quot;, &amp;quot;http://localhost:1111&amp;quot;, nil)
+    go func() {
+        resp, err := client.Do(req)
+        fmt.Println(&amp;quot;Doing http request is a hard job&amp;quot;)
+        pack := struct {
+            r   *http.Response
+            err error
+        }{resp, err}
+        c &amp;lt;- pack
+    }()
+
+    select {
+    case &amp;lt;-ctx.Done():
+        tr.CancelRequest(req)
+        &amp;lt;-c // Wait for client.Do
+        fmt.Println(&amp;quot;Cancel the context&amp;quot;)
+        return ctx.Err()
+    case ok := &amp;lt;-c:
+        err := ok.err
+        resp := ok.r
+        if err != nil {
+            fmt.Println(&amp;quot;Error &amp;quot;, err)
+            return err
+        }
+
+        defer resp.Body.Close()
+        out, _ := ioutil.ReadAll(resp.Body)
+        fmt.Printf(&amp;quot;Server Response: %s\n&amp;quot;, out)
+
+    }
+    return nil
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;$ go run work.go
+Hey, I&#39;m going to do some work
+Doing http request is a hard job
+Server Response: Go! quick 1
+Finished. I&#39;m going home
+
+$ go run work.go
+Hey, I&#39;m going to do some work
+Doing http request is a hard job
+Cancel the context
+Finished. I&#39;m going home
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As you can see in the output, we avoid the slow responses from the server.&lt;/p&gt;
+
+&lt;p&gt;In the client the tcp connection is canceled so is not going to be busy waiting for a slow response, so we don&amp;rsquo;t waste resources.&lt;/p&gt;
+
+&lt;p&gt;Happy coding gophers!.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Docker image for Go service from the Scratch</title>

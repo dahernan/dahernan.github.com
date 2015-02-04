@@ -3,8 +3,13 @@
   
   <url>
     <loc>http://dahernan.github.io/</loc>
-    <lastmod>2014-12-16T00:00:00+00:00</lastmod>
+    <lastmod>2015-02-04T00:00:00+00:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://dahernan.github.io/2015/02/04/context-and-cancellation-of-goroutines/</loc>
+    <lastmod>2015-02-04T00:00:00+00:00</lastmod>
   </url>
   
   <url>
