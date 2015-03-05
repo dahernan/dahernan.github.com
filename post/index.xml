@@ -6,7 +6,139 @@
     <language>en-US</language>
     <author>Enthusiastic Hugo User</author>
     <rights>Copyright (c) 2014, Enthusiastic Hugo User; all rights reserved.</rights>
-    <updated>Wed, 04 Feb 2015 00:00:00 UTC</updated>
+    <updated>Thu, 05 Mar 2015 00:00:00 UTC</updated>
+    
+    <item>
+      <title>Authentication library for Go net/http and Negroni</title>
+      <link>http://dahernan.github.io/2015/03/05/authentication-library-for-go-net/http-and-negroni/</link>
+      <pubDate>Thu, 05 Mar 2015 00:00:00 UTC</pubDate>
+      <author>Enthusiastic Hugo User</author>
+      <guid>http://dahernan.github.io/2015/03/05/authentication-library-for-go-net/http-and-negroni/</guid>
+      <description>
+
+&lt;p&gt;Some weeks ago in the &lt;a href=&#34;http://blog.gopheracademy.com/gophers-slack-community/&#34;&gt;Gophers Slack Community&lt;/a&gt; somebody asked about how to do authentication, for a http server in Go.
+I could make up a gist, based in a web application that I had from some months ago. But, I decided to put everything together and realease a simple library to do Authentication based in a configurable store.&lt;/p&gt;
+
+&lt;p&gt;I named &lt;a href=&#34;https://github.com/dahernan/auth&#34;&gt;Auth&lt;/a&gt;, not very original name, but at least it shows the purpose.&lt;/p&gt;
+
+&lt;p&gt;Some of the features are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Authentication of the users via configurable store&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;net/http&lt;/code&gt; compatible&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/codegangsta/negroni&#34;&gt;Negroni&lt;/a&gt; middleware&lt;/li&gt;
+&lt;li&gt;Use of JSON Web Tokens (JWT)&lt;/li&gt;
+&lt;li&gt;JSON interface&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The following example is using &lt;code&gt;net/http&lt;/code&gt; to secure the path &lt;code&gt;/secure&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;package main
+
+import (
+    &amp;quot;fmt&amp;quot;
+    &amp;quot;log&amp;quot;
+    &amp;quot;net/http&amp;quot;
+    &amp;quot;time&amp;quot;
+
+    &amp;quot;github.com/boltdb/bolt&amp;quot;
+    &amp;quot;github.com/dahernan/auth&amp;quot;
+    &amp;quot;github.com/dahernan/auth/jwt&amp;quot;
+    &amp;quot;github.com/dahernan/auth/store&amp;quot;
+)
+
+func main() {
+    // Using BoltDB to store the users
+    db, err := bolt.Open(&amp;quot;usersdb&amp;quot;, 0600, &amp;amp;bolt.Options{})
+    if err != nil {
+        log.Fatalln(&amp;quot;Can not open the database&amp;quot;, err)
+    }
+    defer db.Close()
+
+    boltStore, err := store.NewBoltStore(db, &amp;quot;users&amp;quot;)
+    if err != nil {
+        log.Fatalln(&amp;quot;Can not create bolt store&amp;quot;, err)
+    }
+
+    // check github.com/dgrijalva/jwt-go for the JWT options
+    options := jwt.Options{
+        SigningMethod: &amp;quot;RS256&amp;quot;,
+        PrivateKey:    Private, // $ openssl genrsa -out app.rsa keysize
+        PublicKey:     Public,  // $ openssl rsa -in app.rsa -pubout &amp;gt; app.rsa.pub
+        Expiration:    60 * time.Minute,
+    }
+
+    // creates the route with Bolt and JWT options
+    authRoute := auth.NewAuthRoute(boltStore, options)
+
+    http.HandleFunc(&amp;quot;/login&amp;quot;, authRoute.Login)
+    http.HandleFunc(&amp;quot;/signin&amp;quot;, authRoute.Signin)
+
+    // protects this handle 
+    http.Handle(&amp;quot;/secure&amp;quot;, authRoute.AuthHandlerFunc(SecurePlace))
+    
+    http.ListenAndServe(&amp;quot;:1212&amp;quot;, nil)
+
+}
+
+func SecurePlace(w http.ResponseWriter, req *http.Request) {
+    userId := auth.GetUserId(req)
+    token := auth.GetToken(req)
+    fmt.Fprintf(w, &amp;quot;Hey %v you have a token %v&amp;quot;, userId, token)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To use it, you can do some http request to try it, for example:&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_0&#34;&gt;Signin&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ curl -XPOST &amp;quot;http://localhost:1212/signin&amp;quot; -d&#39;
+&amp;gt; {
+&amp;gt;    &amp;quot;email&amp;quot;: &amp;quot;dahernan@dahernan.com&amp;quot;,
+&amp;gt;    &amp;quot;password&amp;quot;: &amp;quot;justTest123&amp;quot;
+&amp;gt; }&#39;
+
+{&amp;quot;id&amp;quot;:&amp;quot;dahernan@dahernan.com&amp;quot;}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_1&#34;&gt;Login&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ curl -XPOST &amp;quot;http://localhost:1212/login&amp;quot; -d&#39;
+&amp;gt; {
+&amp;gt;    &amp;quot;email&amp;quot;: &amp;quot;dahernan@dahernan.com&amp;quot;,
+&amp;gt;    &amp;quot;password&amp;quot;: &amp;quot;justTest123&amp;quot;
+&amp;gt; }&#39;
+
+{&amp;quot;token&amp;quot;:&amp;quot;eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0MjU0MDcyMTksImlhdCI6MTQyNTQwMzYxOSwic3ViIjoiZGFoZXJuYW5AZGFoZXJuYW4uY29tIn0.inRfTdlPZ4dKbHY2dHzTqmyBzLIW9_52oc8NFh_yfnrVEdCzfIAIHIVo_7cksUdUdQ4yMciy-JbuQc8hECx31a3RDNkH2iUSDaueZqM0nJaHsWdLAtO_8nz_zX6AqxPPP-cTb5Qjw3R8cmsrFTwpqTn7agDxgypn7NxFW67WIq_XcjH9Ev9VKFqC7AoV9wo2noX6l42JL_338UoNib3K--cUKTeJdCjygj-LH2TBobG9t3Wn55rFmr1oVfKMOTVx1eJpRl376tUemD-IXxCN0ZG788TLihLhXolbumnHzJ13AzriQEHTOc2GKtwT5M-DqEpj9lhV6uu6clPRFRs9O2PB82t4LkuhWra62-h9_R7fBaCN1-ni03RI-tXKUpWz1XFfcbHzCXzFOhl0fb_h_xpx-xEDKFbEE6JDQowxIIFNTIElv7kz0wke_QUddK1Lz--StMr2BS9Q3h3Xk1XC0dgHsSfZDvF-qbud-asUbaoaokNlsAm0kwUSMTJ_oBi1&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_2&#34;&gt;GET Secure url without Token&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ curl -XGET &amp;quot;http://localhost:1212/secure&amp;quot;
+
+Error no token is provided
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;toc_3&#34;&gt;GET Secure url with Token&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ curl -H &amp;quot;Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0MjU0MDcyMTksImlhdCI6MTQyNTQwMzYxOSwic3ViIjoiZGFoZXJuYW5AZGFoZXJuYW4uY29tIn0.inRfTdlPZ4dKbHY2dHzTqmyBzLIW9_52oc8NFh_yfnrVEdCzfIAIHIVo_7cksUdUdQ4yMciy-JbuQc8hECx31a3RDNkH2iUSDaueZqM0nJaHsWdLAtO_8nz_zX6AqxPPP-cTb5Qjw3R8cmsrFTwpqTn7agDxgypn7NxFW67WIq_XcjH9Ev9VKFqC7AoV9wo2noX6l42JL_338UoNib3K--cUKTeJdCjygj-LH2TBobG9t3Wn55rFmr1oVfKMOTVx1eJpRl376tUemD-IXxCN0ZG788TLihLhXolbumnHzJ13AzriQEHTOc2GKtwT5M-DqEpj9lhV6uu6clPRFRs9O2PB82t4LkuhWra62-h9_R7fBaCN1-ni03RI-tXKUpWz1XFfcbHzCXzFOhl0fb_h_xpx-xEDKFbEE6JDQowxIIFNTIElv7kz0wke_QUddK1Lz--StMr2BS9Q3h3Xk1XC0dgHsSfZDvF-qbud-asUbaoaokNlsAm0kwUSMTJ_oBi1&amp;quot; -XGET &amp;quot;http://localhost:1212/secure&amp;quot;
+
+Hey dahernan@dahernan.com you have a token
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can implement your own store, you only have to implement this interface:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;type UserRepository interface {
+    Signin(email, pass string) (string, error)
+    Login(email, pass string) (string, error)
+    UserByEmail(email string) (User, error)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I think the library is ideal to implement a little Authentication Microservice.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Context and Cancellation of goroutines</title>
