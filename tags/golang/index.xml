@@ -39,7 +39,7 @@
 &lt;p&gt;&lt;img src=&#34;https://docs.google.com/drawings/d/14vcCmiCFywml5P9ApN76hRbcb7B_PkzSo6XUoOAMcRg/pub?w=480&amp;amp;h=360&#34; alt=&#34;Pub/Sub&#34; /&gt;
 &lt;/p&gt;
 
-&lt;p&gt;You can have clients that are aware of the changes in other peers, or you can have a pure subscriber that only receives the changes, it doesn&amp;rsquo;t act like a client.&lt;/p&gt;
+&lt;p&gt;You can have clients that are aware of the changes in other peers, or you can have a pure subscriber that only receives the changes.&lt;/p&gt;
 
 &lt;h2 id=&#34;toc_0&#34;&gt;Use case&lt;/h2&gt;
 
