@@ -6,7 +6,81 @@
     <language>en-US</language>
     <author>Enthusiastic Hugo User</author>
     <rights>Copyright (c) 2014, Enthusiastic Hugo User; all rights reserved.</rights>
-    <updated>Thu, 05 Mar 2015 00:00:00 UTC</updated>
+    <updated>Tue, 17 Mar 2015 00:00:00 UTC</updated>
+    
+    <item>
+      <title>Service Discovery with Mangos and Go</title>
+      <link>http://dahernan.github.io/2015/03/17/service-discovery-with-mangos-and-go/</link>
+      <pubDate>Tue, 17 Mar 2015 00:00:00 UTC</pubDate>
+      <author>Enthusiastic Hugo User</author>
+      <guid>http://dahernan.github.io/2015/03/17/service-discovery-with-mangos-and-go/</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/gdamore/mangos&#34;&gt;Mangos&lt;/a&gt; is a pure Go implementation of &lt;a href=&#34;http://nanomsg.org/index.html&#34;&gt;Scalable Protocolos&lt;/a&gt;, there is a good introduction about it, in this &lt;a href=&#34;http://www.bravenewgeek.com/fast-scalable-networking-in-go-with-mangos/&#34;&gt;blog post&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Also, that blog gave me the idea to implement a simple way to do service discovery. The common solution for service discovery is using some kind of distribuited system to store the changes, the usual solutions for this problems are &lt;a href=&#34;http://zookeeper.apache.org/&#34;&gt;Zookeeper&lt;/a&gt;, &lt;a href=&#34;https://github.com/coreos/etcd&#34;&gt;etcd&lt;/a&gt;, &lt;a href=&#34;https://www.consul.io/&#34;&gt;consul&lt;/a&gt;, &lt;a href=&#34;https://github.com/Netflix/eureka&#34;&gt;eureka&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;That&amp;rsquo;s usually pretty good, but sometimes you don&amp;rsquo;t need that kind of solution to solve a simple problem. You may not have many servers and using a library could be enough to solve that problem.&lt;/p&gt;
+
+&lt;p&gt;So I released a small library to do service discovery based in Mangos, I called:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/dahernan/gopherdiscovery&#34;&gt;gopherdiscovery&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It uses one socket for emiting a survey heartbeat.
+&lt;img src=&#34;https://docs.google.com/drawings/d/1XvKaxDBhWLeOoQHiofWJNAvo1139i_3Z9NCUDZJCJ8c/pub?w=480&amp;amp;h=360&#34; alt=&#34;Survey&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;With the heartbeat from the server you can know the clients that are online, and whenever a client goes down, you&amp;rsquo;ll know it in the next heartbeat slot.&lt;/p&gt;
+
+&lt;p&gt;But you need to notify in some way to the interested parties that new clients are connected or disconnected. And for that I use mangos pub/sub socket to publish the changes.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://docs.google.com/drawings/d/14vcCmiCFywml5P9ApN76hRbcb7B_PkzSo6XUoOAMcRg/pub?w=480&amp;amp;h=360&#34; alt=&#34;Pub/Sub&#34; /&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;Use case&lt;/h2&gt;
+
+&lt;p&gt;A good use case is for example, to update the peers in &lt;a href=&#34;https://github.com/golang/groupcache&#34;&gt;groupcache&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;We can have a very light server for service discovery:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+urlServer := &amp;quot;tcp://10.0.0.100:40007&amp;quot;
+urlPubSub := &amp;quot;tcp://10.0.0.100:50007&amp;quot;
+
+// on the server
+server, err := gopherdiscovery.Server(urlServer, urlPubSub, opts)
+server.Wait()
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And for every single client, use &lt;a href=&#34;https://github.com/golang/groupcache&#34;&gt;groupcache&lt;/a&gt; in combination with &lt;a href=&#34;https://github.com/dahernan/gopherdiscovery&#34;&gt;gopherdiscovery&lt;/a&gt; to update the peers that are doing the cache.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var peers chan []string
+
+urlServer := &amp;quot;tcp://10.0.0.100:40007&amp;quot;
+urlPubSub := &amp;quot;tcp://10.0.0.100:50007&amp;quot;
+me := &amp;quot;http://10.0.0.1:8080&amp;quot;
+
+// any of the peers
+poolGroupCache := groupcache.NewHTTPPool(me)
+
+client, err := gopherdiscovery.ClientWithSub(urlServer, urlPubSub, me)
+
+peers, err = client.Peers() 
+for nodes := ranges peers {
+    // every time there is a change in the peers -&amp;gt; Set in groupcache
+    poolGroupCache.Set(nodes...)    
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Another example could be, adding and removing proxies from a loadbalancer.&lt;/p&gt;
+
+&lt;p&gt;If you like it, &lt;a href=&#34;https://github.com/dahernan/gopherdiscovery&#34;&gt;check the source and the docs&lt;/a&gt;, and any feedback is welcome!&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Authentication library for Go net/http and Negroni</title>

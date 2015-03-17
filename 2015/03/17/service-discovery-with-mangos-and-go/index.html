@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="David Hernandez"> 
+
+    <title>Service Discovery with Mangos and Go - http://dahernan.github.io</title>
+    <link rel="canonical" href="http://dahernan.github.io/2015/03/17/service-discovery-with-mangos-and-go/">
+    
+    <link href="http://dahernan.github.io/css/bootstrap.css" rel="stylesheet">
+    <link href="http://dahernan.github.io/css/font-awesome.css" rel="stylesheet">
+    <link href="http://dahernan.github.io/css/custom.css" rel="stylesheet">
+    
+</head>
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle Navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="http://dahernan.github.io">dahernan&#39;s blog</a>
+            </div>
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="http://dahernan.github.io/post/">Post Index</a></li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+<div class="container">
+    <div class="row">
+        <div class="col-md-9">
+            <div class="well well-sm">
+                    <h3>Service Discovery with Mangos and Go<br> <small></small></h3>
+                    <hr>
+                    
+
+<p><a href="https://github.com/gdamore/mangos">Mangos</a> is a pure Go implementation of <a href="http://nanomsg.org/index.html">Scalable Protocolos</a>, there is a good introduction about it, in this <a href="http://www.bravenewgeek.com/fast-scalable-networking-in-go-with-mangos/">blog post</a>.</p>
+
+<p>Also, that blog gave me the idea to implement a simple way to do service discovery. The common solution for service discovery is using some kind of distribuited system to store the changes, the usual solutions for this problems are <a href="http://zookeeper.apache.org/">Zookeeper</a>, <a href="https://github.com/coreos/etcd">etcd</a>, <a href="https://www.consul.io/">consul</a>, <a href="https://github.com/Netflix/eureka">eureka</a>.</p>
+
+<p>That&rsquo;s usually pretty good, but sometimes you don&rsquo;t need that kind of solution to solve a simple problem. You may not have many servers and using a library could be enough to solve that problem.</p>
+
+<p>So I released a small library to do service discovery based in Mangos, I called:</p>
+
+<ul>
+<li><a href="https://github.com/dahernan/gopherdiscovery">gopherdiscovery</a></li>
+</ul>
+
+<p>It uses one socket for emiting a survey heartbeat.
+<img src="https://docs.google.com/drawings/d/1XvKaxDBhWLeOoQHiofWJNAvo1139i_3Z9NCUDZJCJ8c/pub?w=480&amp;h=360" alt="Survey" />
+</p>
+
+<p>With the heartbeat from the server you can know the clients that are online, and whenever a client goes down, you&rsquo;ll know it in the next heartbeat slot.</p>
+
+<p>But you need to notify in some way to the interested parties that new clients are connected or disconnected. And for that I use mangos pub/sub socket to publish the changes.</p>
+
+<p><img src="https://docs.google.com/drawings/d/14vcCmiCFywml5P9ApN76hRbcb7B_PkzSo6XUoOAMcRg/pub?w=480&amp;h=360" alt="Pub/Sub" />
+</p>
+
+<h2 id="toc_0">Use case</h2>
+
+<p>A good use case is for example, to update the peers in <a href="https://github.com/golang/groupcache">groupcache</a></p>
+
+<p>We can have a very light server for service discovery:</p>
+
+<pre><code class="go">
+urlServer := &quot;tcp://10.0.0.100:40007&quot;
+urlPubSub := &quot;tcp://10.0.0.100:50007&quot;
+
+// on the server
+server, err := gopherdiscovery.Server(urlServer, urlPubSub, opts)
+server.Wait()
+
+</code></pre>
+
+<p>And for every single client, use <a href="https://github.com/golang/groupcache">groupcache</a> in combination with <a href="https://github.com/dahernan/gopherdiscovery">gopherdiscovery</a> to update the peers that are doing the cache.</p>
+
+<pre><code class="go">var peers chan []string
+
+urlServer := &quot;tcp://10.0.0.100:40007&quot;
+urlPubSub := &quot;tcp://10.0.0.100:50007&quot;
+me := &quot;http://10.0.0.1:8080&quot;
+
+// any of the peers
+poolGroupCache := groupcache.NewHTTPPool(me)
+
+client, err := gopherdiscovery.ClientWithSub(urlServer, urlPubSub, me)
+
+peers, err = client.Peers() 
+for nodes := ranges peers {
+    // every time there is a change in the peers -&gt; Set in groupcache
+    poolGroupCache.Set(nodes...)    
+}
+
+</code></pre>
+
+<p>Another example could be, adding and removing proxies from a loadbalancer.</p>
+
+<p>If you like it, <a href="https://github.com/dahernan/gopherdiscovery">check the source and the docs</a>, and any feedback is welcome!</p>
+
+            </div>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'dahernan';
+    var disqus_identifier = 'http:\/\/dahernan.github.io\/2015\/03\/17\/service-discovery-with-mangos-and-go\/';
+    var disqus_title = 'Service Discovery with Mangos and Go';
+    var disqus_url = 'http:\/\/dahernan.github.io\/2015\/03\/17\/service-discovery-with-mangos-and-go\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+
+        
+        <div class="col-md-3">
+            <div class="well well-sm"> 
+                <h4>March 17, 2015<br>
+                <small>324 words</small></h4>
+                <hr>
+                <strong>Categories</strong>
+                <ul class="list-unstyled">
+                
+                </ul>
+                <hr>
+                <strong>Tags</strong><br>
+                <a class="label label-default" href="http://dahernan.github.io/tags/golang">golang</a> <a class="label label-default" href="http://dahernan.github.io/tags/nanomsg">nanomsg</a> <a class="label label-default" href="http://dahernan.github.io/tags/mangos">mangos</a> 
+            </div>
+                <div class="panel panel-default">
+        <div class="panel-heading" style="padding: 2px 15px;">
+            <h4>@dahernan</h4>
+        </div>
+        <div class="panel-body">
+            <img src="http://dahernan.github.io/images/profile.jpg" class="img-responsive img-thumbnail" alt="My profile image"/>
+            <a href="https://github.com/dahernan/" class="btn btn-primary btn-xs"><i class="fa fa-github-square fa-2x"></i></a>
+            <a href="https://www.twitter.com/dahernan" class="btn btn-info btn-xs"><i class="fa fa-twitter-square fa-2x"></i></a>
+            <a href="http://linkedin.com/in/dahernan" class="btn btn-info btn-xs"><i class="fa fa-linkedin-square fa-2x"></i></a>      
+        </div>
+    </div>
+        </div>
+    </div>
+        <footer>
+            <div class="row">
+                <hr>
+                <div class="col-sm-12">
+                    <p>&copy; David Hernandez 2014<br>
+                    Built with <a href="https://github.com/spf13/hugo">Hugo</a></p>
+                </div>
+            </div>
+        </footer>
+</div>
+
+    <script src="http://dahernan.github.io/js/jquery.js"></script>
+    <script src="http://dahernan.github.io/js/bootstrap.js"></script>
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-55935991-4', 'auto');
+  ga('send', 'pageview');
+</script>
+</body>
+</html>
