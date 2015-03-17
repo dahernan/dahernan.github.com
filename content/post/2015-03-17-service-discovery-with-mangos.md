@@ -27,6 +27,7 @@ But you need to notify in some way to the interested parties that new clients ar
 
 ![Pub/Sub](https://docs.google.com/drawings/d/14vcCmiCFywml5P9ApN76hRbcb7B_PkzSo6XUoOAMcRg/pub?w=480&h=360)
 
+You can have clients that are aware of the changes in other peers, or you can have a pure subscriber that only receives the changes, it doesn't act like a client.
 
 ## Use case
 
