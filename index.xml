@@ -6,7 +6,51 @@
     <language>en-US</language>
     <author>Enthusiastic Hugo User</author>
     <rights>Copyright (c) 2014, Enthusiastic Hugo User; all rights reserved.</rights>
-    <updated>Tue, 17 Mar 2015 00:00:00 UTC</updated>
+    <updated>Fri, 28 Aug 2015 00:00:00 UTC</updated>
+    
+    <item>
+      <title>GolangUK 2015 Conference</title>
+      <link>http://dahernan.github.io/2015/08/28/golanguk-2015-conference/</link>
+      <pubDate>Fri, 28 Aug 2015 00:00:00 UTC</pubDate>
+      <author>Enthusiastic Hugo User</author>
+      <guid>http://dahernan.github.io/2015/08/28/golanguk-2015-conference/</guid>
+      <description>
+
+&lt;p&gt;Last Friday I had the pleasure to parcipate as an organiser of the &lt;a href=&#34;http://www.golanguk.com/about/&#34;&gt;GolangUK 2015&lt;/a&gt;, the first conference around &lt;a href=&#34;http://www.golang.org&#34;&gt;Go language&lt;/a&gt; that was celebrated in UK.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_0&#34;&gt;Little bit of history&lt;/h2&gt;
+
+&lt;p&gt;Everything started in the &lt;a href=&#34;http://www.meetup.com/Go-London-User-Group/&#34;&gt;Go London user group meetup&lt;/a&gt; I was talking with my friend &lt;a href=&#34;https://twitter.com/agonzalezro&#34;&gt;Alex&lt;/a&gt; about the idea of organise a big event community driven and non profit, so we get together a couple of times to talk about it, to see the steps that we had to do to organize it.&lt;/p&gt;
+
+&lt;p&gt;We did some research and we left the idea for a while, mainly because It was a lot of work in a field that we didn&amp;rsquo;t have any experience.&lt;/p&gt;
+
+&lt;h3 id=&#34;toc_1&#34;&gt;And sometimes the magic just happens&lt;/h3&gt;
+
+&lt;p&gt;When we were not sure about the idea, &lt;a href=&#34;https://twitter.com/johannacherry&#34;&gt;Johanna&lt;/a&gt; contacted Alex. She&amp;rsquo;s a really good Go developer and also one of the organisers (with &lt;a href=&#34;https://twitter.com/sa,&#34;&gt;Sam&lt;/a&gt;) of the &lt;a href=&#34;http://phpconference.co.uk/&#34;&gt;PHP UK Conference&lt;/a&gt; a conference with long track of successful  editions.&lt;/p&gt;
+
+&lt;p&gt;We talked about the idea in a pub, and the team was the perfect combination to make GolangUK :)&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_2&#34;&gt;GolangUK 2015 the good&lt;/h2&gt;
+
+&lt;p&gt;I really enjoyed the day, even with the little tension to be an organizer, was almost a perfect day, really good speakers, awesome venue with really good food. Talking with old friends and making new.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_3&#34;&gt;The bad&lt;/h2&gt;
+
+&lt;p&gt;The only complain that had is that we didn&amp;rsquo;t have enough gophers for everyone, we tried to give the gophers to the people arriving first, but was difficult to manage with the all bags around the registration point.&lt;/p&gt;
+
+&lt;p&gt;You really feel bad when someone ask you, &amp;ldquo;can I get a gopher for my daughter?&amp;rdquo; and you gave the last one 2 minutes ago.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_4&#34;&gt;Diversity&lt;/h2&gt;
+
+&lt;p&gt;Was really difficult to encourage and find diversity in the speakers and delegates in this type of conference, specially with the call for papers, I had some help from people in the slack community to promote the event, but even with that there is a lot of room for improvement, any feedback and ideas are welcome.&lt;/p&gt;
+
+&lt;h2 id=&#34;toc_5&#34;&gt;Thank you and see you next year&lt;/h2&gt;
+
+&lt;p&gt;Thank you everybody to make it happen, and my highlight and special thanks for the closing keynote to &lt;a href=&#34;https://twitter.com/dgryski&#34;&gt;Damian&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The videos should be realeased soon :)&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Service Discovery with Mangos and Go</title>
