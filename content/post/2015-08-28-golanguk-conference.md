@@ -9,6 +9,8 @@ tags:
 
 Last Friday I had the pleasure to parcipate as an organiser of the [GolangUK 2015](http://www.golanguk.com/about/), the first conference around [Go language](http://www.golang.org) that was celebrated in UK.
 
+![alt](/images/golanguk.png)
+
 ## Little bit of history 
 
 Everything started in the [Go London user group meetup](http://www.meetup.com/Go-London-User-Group/) I was talking with my friend [Alex](https://twitter.com/agonzalezro) about the idea of organise a big event community driven and non profit, so we get together a couple of times to talk about it, to see the steps that we had to do to organize it.
