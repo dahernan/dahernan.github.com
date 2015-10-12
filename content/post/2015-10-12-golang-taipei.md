@@ -7,7 +7,7 @@ tags:
   - "meetup"
 ---
 
-A couple of weeks ago, taking advance of my trip to Taiwan I had the opportunity to assist and speak at the [Golang Taipe Gathering #15](http://golang.kktix.cc/events/gtg15).
+A week ago, taking advance of my trip to Taiwan I had the opportunity to assist and speak at the [Golang Taipe Gathering #15](http://golang.kktix.cc/events/gtg15).
 
 ![alt](/images/taipei4.png)
 
