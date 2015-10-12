@@ -11,7 +11,7 @@ A week ago, taking advance of my trip to Taiwan I had the opportunity to assist 
 
 ![alt](/images/taipei4.png)
 
-The event was hosted by the company who made [PicCollage](http://cardinalblue.com/) that is a little app to make collage of photos that is very popular is Asia (over 12 million active users), and that's probably one of the reasons that Go is very popular in Asia, you have lots of users, so you need technology easy to scale.
+The event was hosted by the company who made [PicCollage](http://cardinalblue.com/).It's a little app to make a collage of photos, is very popular is Asia (over 12 million active users), and that's probably one of the reasons that Go is very popular in Asia, you have lots of users, so you need technology easy to scale.
 
 I enjoyed a lot the presentation that [Jerry Huang](https://twitter.com/kerkerj) did about Gobot with one of the Sphero balls. The presentation was in Chinese, but the slides were in English so it was not very difficult to follow even I don't understand any Chinese word.
 
