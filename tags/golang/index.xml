@@ -6,7 +6,37 @@
     <language>en-US</language>
     <author>Enthusiastic Hugo User</author>
     <rights>Copyright (c) 2014, Enthusiastic Hugo User; all rights reserved.</rights>
-    <updated>Fri, 28 Aug 2015 00:00:00 UTC</updated>
+    <updated>Mon, 12 Oct 2015 00:00:00 UTC</updated>
+    
+    <item>
+      <title>Golang Taipei Gathering</title>
+      <link>http://dahernan.github.io/2015/10/12/golang-taipei-gathering/</link>
+      <pubDate>Mon, 12 Oct 2015 00:00:00 UTC</pubDate>
+      <author>Enthusiastic Hugo User</author>
+      <guid>http://dahernan.github.io/2015/10/12/golang-taipei-gathering/</guid>
+      <description>&lt;p&gt;A couple of weeks ago, taking advance of my trip to Taiwan I had the opportunity to assist and speak at the &lt;a href=&#34;http://golang.kktix.cc/events/gtg15&#34;&gt;Golang Taipe Gathering #15&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;/images/taipei4.png&#34; alt=&#34;alt&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;The event was hosted by the company who made &lt;a href=&#34;http://cardinalblue.com/&#34;&gt;PicCollage&lt;/a&gt; that is a little app to make collage of photos that is very popular is Asia (over 12 million active users), and that&amp;rsquo;s probably one of the reasons that Go is very popular in Asia, you have lots of users, so you need technology easy to scale.&lt;/p&gt;
+
+&lt;p&gt;I enjoyed a lot the presentation that &lt;a href=&#34;https://twitter.com/kerkerj&#34;&gt;Jerry Huang&lt;/a&gt; did about Gobot with one of the Sphero balls. The presentation was in Chinese, but the slides were in English so it was not very difficult to follow even I don&amp;rsquo;t understand any Chinese word.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;/images/taipei2.png&#34; alt=&#34;alt&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;My presentation was about how to implement Microservices in Go, based in the work that I did for my last client. As a take out, is good to have a complete self explained slides when you are presenting for a non English speakers, it makes much easier to follow.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;/images/taipei1.png&#34; alt=&#34;alt&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;After the talk, &lt;a href=&#34;https://twitter.com/hSATAC&#34;&gt;Ash&lt;/a&gt; the organiser of the meetup, and his friend &lt;a href=&#34;https://twitter.com/j100002ben&#34;&gt;Benjamin&lt;/a&gt; take us out for dinner in a local place, were the food was awesome! Thank you so much guys, was so much fun!.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;/images/taipei3.png&#34; alt=&#34;alt&#34; /&gt;
+&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>GolangUK 2015 Conference</title>
